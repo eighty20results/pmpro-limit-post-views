@@ -35,7 +35,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'includes/admin.php' );
  *
  * @since 0.3.0
  */
-function pmprolpv_init() {
+function pmprobpp_init() {
 
 	// Check for backwards compatibility
 	if ( ! defined( 'PMPRO_LPV_LIMIT' ) ) {
@@ -46,7 +46,7 @@ function pmprolpv_init() {
 		if ( empty( $level_id ) )
 			$level_id = 0;
 
-		$limit = get_option( 'pmprolpv_limit_' . $level_id );
+		$limit = get_option( 'pmprobpp_limit_' . $level_id );
 		if(!empty($limit)) {
 			define( 'PMPRO_LPV_LIMIT', $limit['views'] );
 			define( 'PMPRO_LPV_LIMIT_PERIOD', $limit['period'] );
@@ -55,13 +55,13 @@ function pmprolpv_init() {
 
 	// Check for backwards compatibility
 	if ( ! defined( 'PMPRO_LPV_USE_JAVASCRIPT' ) ) {
-		$use_js = get_option( 'pmprolpv_use_js' );
+		$use_js = get_option( 'pmprobpp_use_js' );
 		define( 'PMPRO_LPV_USE_JAVASCRIPT', $use_js );
 	}
 
 }
 
-add_action( 'init', 'pmprolpv_init' );
+add_action( 'init', 'pmprobpp_init' );
 
 //php limit (deactivate JS version below if you use this)
 add_action( "wp", "pmpro_lpv_wp" );
@@ -113,7 +113,7 @@ function pmpro_lpv_wp() {
 			//if count is above limit, redirect, otherwise update cookie
 			if ( $count > PMPRO_LPV_LIMIT ) {
 
-				$page_id = get_option( 'pmprolpv_redirect_page' );
+				$page_id = get_option( 'pmprobpp_redirect_page' );
 				if ( empty( $page_id ) ) {
 					$redirect_url = pmpro_url( 'levels' );
 				} else {
@@ -190,7 +190,7 @@ function pmpro_lpv_wp_footer() {
 		//if count is above limit, redirect, otherwise update cookie
 		if (count > <?php echo intval(PMPRO_LPV_LIMIT); ?>) {
 			<?php
-				$page_id = get_option('pmprolpv_redirect_page');
+				$page_id = get_option('pmprobpp_redirect_page');
 				if(empty($page_id))
 					$redirect_url = pmpro_url('levels');
 				else
@@ -215,7 +215,7 @@ function pmpro_lpv_wp_footer() {
 							$expires = DAY_IN_SECONDS * 30;
 					}
 				}
-				
+
 				if(empty($expires))
 					$expires = DAY_IN_SECONDS * 30;
 			?>
@@ -230,10 +230,10 @@ function pmpro_lpv_wp_footer() {
 Function to add links to the plugin row meta
 */
 function pmpro_lpv_plugin_row_meta($links, $file) {
-	if(strpos($file, 'pmpro-limit-post-views.php') !== false)
+	if(strpos($file, 'e20r-blur-pmpro-posts.php') !== false)
 	{
 		$new_links = array(
-			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plugins-on-github/pmpro-limit-post-views/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plugins-on-github/e20r-blur-pmpro-posts/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
 			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);

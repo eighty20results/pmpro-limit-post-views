@@ -13,122 +13,76 @@
  *
  * @since 0.3.0
  */
-function pmprolpv_admin_menu() {
+function e20rbpc_admin_menu() {
 	add_submenu_page(
 		'pmpro-membershiplevels',
-		'PMPro Limit Post Views',
-		'Limit Post Views',
+		__('E20R Blur PMPro Content','e20rbpc'),
+		__('E20R Blur Content', 'e20rbpc'),
 		apply_filters( 'pmpro_edit_member_capability', 'manage_options' ),
-		'pmpro-limitpostviews',
-		'pmprolpv_settings_page'
+		'e20rbpc_blurprotectedposts',
+		'e20rbpc_settings_page'
 	);
 }
 
-add_action( 'admin_menu', 'pmprolpv_admin_menu' );
+add_action( 'admin_menu', 'e20rbpc_admin_menu' );
 
 /**
  * Include settings page.
  *
- * @since 0.3.0
+ * @since 0.1.0
  */
-function pmprolpv_settings_page() {
-	require_once( plugin_dir_path( __FILE__ ) . '../adminpages/limitpostviews.php' );
+function e20rbpc_settings_page() {
+	require_once( plugin_dir_path( __FILE__ ) . '../adminpages/blurprotectedposts.php' );
 }
 
 /**
  * Register settings sections and fields.
  *
- * @since 0.3.0
+ * @since 0.1.0
  */
-function pmprolpv_admin_init() {
+function e20rbpc_admin_init() {
 
 	// Register limits settings section.
 	add_settings_section(
-		'pmprolpv_limits',
-		'Membership Post View Limits',
-		'pmprolpv_settings_section_limits',
-		'pmpro-limitpostviews'
+		'e20rbpc_excerpt_limit',
+		__('For protected excerpts', 'e20rbpc'),
+		'e20rbpc_settings_section_excerpt',
+		'e20rbpc_blurprotectedposts'
 	);
 
-	// Register redirection settings section.
-	add_settings_section(
-		'pmprolpv_redirection',
-		'Redirection',
-		'pmprolpv_settings_section_redirection',
-		'pmpro-limitpostviews'
-	);
-
-	// Register limits settings fields.
-	$levels = pmpro_getAllLevels( true, true );
-	$levels[0] = new stdClass();
-	$levels[0]->name = __('Non-members', 'pmpro');
-	asort($levels);
-	foreach($levels as $id => $level ) {
-		$title = $level->name;
+	// Register blur setting fields.
 		add_settings_field(
-			'pmprolpv_limit_' . $id,
-			$title,
-			'pmprolpv_settings_field_limits',
-			'pmpro-limitpostviews',
-			'pmprolpv_limits',
-			$id
+			'e20rbpc-wordcount',
+			__('Number of words', 'e20rbpc'),
+			'e20rbpc_settings_field_sizelimit',
+			'e20rbpc_blurprotectedposts',
+			'e20rbpc_excerpt_limit'
+
 		);
 
-		// Register JavaScript setting.
+		// Register Blur Protected Pages setting.
 		register_setting(
-			'pmpro-limitpostviews',
-			'pmprolpv_limit_' . $id,
-			'pmprolpv_sanitize_limit'
+			'e20rbpc_settings',
+			'e20rbpc_settings',
+			'e20rbpc_sanitize_sizelimit'
 		);
-	}
 
-	// Register redirection settings field.
-	add_settings_field(
-		'pmprolpv_redirect_page',
-		'Redirect to',
-		'pmprolpv_settings_field_redirect_page',
-		'pmpro-limitpostviews',
-		'pmprolpv_redirection'
-	);
-
-	// Register redirection setting.
-	register_setting(
-		'pmpro-limitpostviews',
-		'pmprolpv_redirect_page'
-	);
-
-	// Register JavaScript settings field.
-	add_settings_field(
-		'pmprolpv_use_js',
-		'Use JavaScript redirection',
-		'pmprolpv_settings_field_use_js',
-		'pmpro-limitpostviews',
-		'pmprolpv_redirection'
-	);
-
-
-	// Register JavaScript setting.
-	register_setting(
-		'pmpro-limitpostviews',
-		'pmprolpv_use_js'
-	);
 }
 
-add_action( 'admin_init', 'pmprolpv_admin_init' );
+add_action( 'admin_init', 'e20rbpc_admin_init' );
 
 /**
- * Sanitize limit fields
+ * Sanitize word limit field
  *
- * @since 0.3.0
+ * @since 0.1.0
  * @param $args
  *
- * @return mixed
+ * @return integer
  */
-function pmprolpv_sanitize_limit($args) {
+function e20rbpc_sanitize_sizelimit($args) {
 
-	if(!is_numeric($args['views'])) {
-		$args['views'] = '';
-		$args['period'] = '';
+	if(!is_numeric($args['wordcount'])) {
+		$args['wordcount'] = 20;
 	}
 
 	return $args;
