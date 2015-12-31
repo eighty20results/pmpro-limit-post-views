@@ -22,8 +22,8 @@ require_once( PMPRO_DIR . '/adminpages/admin_header.php' );
  *
  * @since 0.3.0
  */
-function e20rbpc_settings_section_excerpt() {
-	echo '<p>' . __( 'Users without one of the membership levels will be able to see this many words of the post/page for the protected post/page. The remaining text on the page will be obfuscated', 'pmprobpp' ) . '</p>';
+function e20rbpc_settings_section() {
+	echo '<p>' . __( 'Users without one of the membership levels will be able to read the content of this many paragraphs of the protected content. The remaining text on the page will be blurred with a call-to-action (CTA) overlay', 'e20rbpc' ) . '</p>';
 }
 
 /**
@@ -31,12 +31,12 @@ function e20rbpc_settings_section_excerpt() {
  *
  * @since 0.3.0
  */
-function e20rbpc_settings_field_sizelimit($args) {
+function e20rbpc_settings_paragraphs($args) {
 
 	$excerpt_size = empty($args) ? get_option( 'e20rbpc_settings') : $args;?>
 
-	<input size="10" type="text" id="e20rbpc_settings"
-	       name="e20rbpc_settings[wordcount]" value="<?php echo $excerpt_size['wordcount']; ?>"> <?php _e('words readable in excerpt', 'pmprobpp' ); ?>
+	<input size="10" type="text" id="e20rbpc_settings_paragraphs"
+	       name="e20rbpc_settings[paragraphs]" value="<?php echo esc_attr($excerpt_size['paragraphs']); ?>"> <?php _e('paragraphs readable', 'e20rbpc' ); ?>
 	<?php
 }
 
@@ -45,19 +45,29 @@ function e20rbpc_settings_field_sizelimit($args) {
  *
  * @since 0.3.0
  */
-function e20rbpc_settings_section_redirection() {
-	$pagelist = get_pages(); ?>
-	<select name="e20rbpc_"
-	<?php
+function e20rbpc_settings_ctapage($args) {
+
+	$options = empty($args) ? get_option( 'e20rbpc_settings') : $args;
+
+	$pagelist = wp_dropdown_pages(
+		array(
+			'selected' => $options['ctapage'],
+			'name' => "e20rbpc_settings[ctapage]",
+			'show_option_none' => __("PMPro Levels page", "e20rbpc"),
+			'option_none_value' => 0,
+		)
+	);
+
+	e20rbpp_write_log("Current CTA page: {$options['ctapage']}");
 }
 
 
 // Display settings page.
 ?>
-	<h2><?php _e( 'E20r - Blur PMPro Content', 'e20rbpc' ); ?></h2>
+	<h2><?php _e( 'Blur PMPro Content', 'e20rbpc' ); ?></h2>
 	<form action="options.php" method="POST">
 		<?php settings_fields( 'e20rbpc_settings' ); ?>
-		<?php do_settings_sections( 'e20r_blurprotectedposts' ); ?>
+		<?php do_settings_sections( 'e20rbpc' ); ?>
 		<?php submit_button(); ?>
 	</form>
 <?php

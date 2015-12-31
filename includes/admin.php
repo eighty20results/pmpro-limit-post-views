@@ -14,12 +14,11 @@
  * @since 0.3.0
  */
 function e20rbpc_admin_menu() {
-	add_submenu_page(
-		'pmpro-membershiplevels',
-		__('E20R Blur PMPro Content','e20rbpc'),
-		__('E20R Blur Content', 'e20rbpc'),
+	add_options_page(
+		__('Blur Content','e20rbpc'),
+		__('Blur Content', 'e20rbpc'),
 		apply_filters( 'pmpro_edit_member_capability', 'manage_options' ),
-		'e20rbpc_blurprotectedposts',
+		'e20rbpc',
 		'e20rbpc_settings_page'
 	);
 }
@@ -44,28 +43,38 @@ function e20rbpc_admin_init() {
 
 	// Register limits settings section.
 	add_settings_section(
-		'e20rbpc_excerpt_limit',
-		__('For protected excerpts', 'e20rbpc'),
-		'e20rbpc_settings_section_excerpt',
-		'e20rbpc_blurprotectedposts'
+		'e20rbpc_settings_section',
+		__('', 'e20rbpc'),
+		'e20rbpc_settings_section',
+		'e20rbpc'
 	);
 
 	// Register blur setting fields.
-		add_settings_field(
-			'e20rbpc-wordcount',
-			__('Number of words', 'e20rbpc'),
-			'e20rbpc_settings_field_sizelimit',
-			'e20rbpc_blurprotectedposts',
-			'e20rbpc_excerpt_limit'
+	add_settings_field(
+		'e20rbpc_settings_paragraphs',
+		__('Show as regular text', 'e20rbpc'),
+		'e20rbpc_settings_paragraphs',
+		'e20rbpc',
+		'e20rbpc_settings_section'
 
-		);
+	);
 
-		// Register Blur Protected Pages setting.
-		register_setting(
-			'e20rbpc_settings',
-			'e20rbpc_settings',
-			'e20rbpc_sanitize_sizelimit'
-		);
+	// Register blur setting fields.
+	add_settings_field(
+		'e20rbpc_settings_cta',
+		__('CTA content', 'e20rbpc'),
+		'e20rbpc_settings_ctapage',
+		'e20rbpc',
+		'e20rbpc_settings_section'
+
+	);
+
+	// Register Blur Protected Pages setting.
+	register_setting(
+		'e20rbpc_settings',
+		'e20rbpc_settings',
+		'e20rbpc_sanitize_sizelimit'
+	);
 
 }
 
@@ -81,8 +90,8 @@ add_action( 'admin_init', 'e20rbpc_admin_init' );
  */
 function e20rbpc_sanitize_sizelimit($args) {
 
-	if(!is_numeric($args['wordcount'])) {
-		$args['wordcount'] = 20;
+	if(!is_numeric($args['paragraphs'])) {
+		$args['paragraphs'] = 2;
 	}
 
 	return $args;
