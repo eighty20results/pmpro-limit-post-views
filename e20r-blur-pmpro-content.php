@@ -2,19 +2,20 @@
 
 use E20R\BLUR_PMPRO_CONTENT as BPPC;
 /*
-Plugin Name: E20Ro - Blur PMPro Post Content (Add On)
-Plugin URI: http://www.paidmembershipspro.com/wp/blur-pmpro-posts/
-Description: Integrates with Paid Memberships Pro to deliver a more SEO friendly way to hide/obfuscate post content for posts protected by PMPro.
+Plugin Name: Eighty/20 Results - Blur PMPro Content (Add On)
+Plugin URI: https://www.eighty20results.com/blur-pmpro-content/
+Description: Integrates with Paid Memberships Pro to deliver a more SEO friendly way to hide/obfuscate post PMPro content.
 Version: .1
 Author: Eighty/20 Results
 Author URI: http://www.eighty20results.com/thomas-sjolshagen
 */
 /*
-	The idea
-	- Allow the user to specify the number of words to include in the visible portion of the post
-    - Obfuscate all text except <h1[-n]> and <img> & <a href> tags
-    - Use an overlay to "blur" the remaining content
-	- Add overlay on top of the blurred out content and let new users sign up/sign in to the appropriate level to access the page/post.
+	The idea:
+	- Allow the admin to specify the number of paragraphs to include in the visible portion of the post
+    - Make all text unreadable except first N paragraphs plus <h1[-n]>, <img> & <a href> tags
+    - Use an overlay to "blur" the unreadable content
+	- Add a call-to-action overlay on top of the unreadable.
+    - CTA is starting point for sign up/sign in to the preferred membership level.
 */
 
 define('E20R_BLUR_PMPRO_VER', '0.1');
