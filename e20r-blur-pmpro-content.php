@@ -17,6 +17,10 @@ Author URI: http://www.eighty20results.com/thomas-sjolshagen
 	- Add overlay on top of the blurred out content and let new users sign up/sign in to the appropriate level to access the page/post.
 */
 
+define('E20R_BLUR_PMPRO_VER', '0.1');
+define('E20R_BLUR_PMPRO_PLUGIN_URL', plugins_url('', __FILE__));
+define('E20R_BLUR_PMPRO_PLUGIN_DIR', plugin_dir_path(__FILE__));
+
 if ( !function_exists( "\\e20rbpc_autoloader")):
 
     /**

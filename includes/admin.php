@@ -32,7 +32,7 @@ add_action( 'admin_menu', 'e20rbpc_admin_menu' );
  * @since 0.1.0
  */
 function e20rbpc_settings_page() {
-	require_once( plugin_dir_path( __FILE__ ) . '../adminpages/blurprotectedposts.php' );
+	require_once( plugin_dir_path( __FILE__ ) . '../adminpages/e20r_blurpmprocontent.php' );
 }
 
 /**

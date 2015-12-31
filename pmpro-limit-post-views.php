@@ -230,10 +230,10 @@ function pmpro_lpv_wp_footer() {
 Function to add links to the plugin row meta
 */
 function pmpro_lpv_plugin_row_meta($links, $file) {
-	if(strpos($file, 'e20r-blur-pmpro-posts.php') !== false)
+	if(strpos($file, 'e20r-blur-pmpro-content.php') !== false)
 	{
 		$new_links = array(
-			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plugins-on-github/e20r-blur-pmpro-posts/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plugins-on-github/e20r-blur-pmpro-content/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
 			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);

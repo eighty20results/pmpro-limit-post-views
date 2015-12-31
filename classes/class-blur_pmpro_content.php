@@ -26,14 +26,13 @@ class blur_pmpro_content
         // add_filter('e20r_blurppc_overlay_class_filter', 'e20r_blurppc_overlay_class');
 
         remove_all_filters('get_the_excerpt');
-        // remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_start', 1);
-        // remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_end', 100);
-        //add_filter('get_the_excerpt', array($this, 'obfuscate_content'), 5);
+        remove_all_filters('the_content');
 
-        remove_filter('the_content', 'pmpro_membership_content_filter', 5);
-
-        add_filter('the_content', array($this, 'obfuscate_content'), 5, 2);
-        add_filter('get_the_excerpt', array($this, 'obfuscate_content'));
+        add_filter('excerpt_length', array($this, 'set_excerpt_length'), 999);
+        add_filter('wp_trim_excerpt', array($this, 'remove_more_text'), 999);
+        add_filter('the_content', array($this, 'obfuscate_content'), 999, 2);
+        add_filter('get_the_excerpt', array($this, 'obfuscate_content'), 999);
+        add_action('wp_enqueue_scripts', array($this, 'load_css'));
     }
 
     /**
@@ -56,6 +55,30 @@ class blur_pmpro_content
         return $this->word_count;
     }
 
+    public function set_excerpt_length($length) {
+
+        global $post;
+        $words = preg_split('/ /', $post->post_content);
+
+        return count($words);
+    }
+
+    public function load_css() {
+
+        if ( file_exists( E20R_BLUR_PMPRO_PLUGIN_DIR . '/css/e20r-blur-pmpro-content.min.css')) {
+            wp_enqueue_style('e20r-blur-pmpro-content', E20R_BLUR_PMPRO_PLUGIN_URL . '/css/e20r-blur-pmpro-content.min.css', null, E20R_BLUR_PMPRO_VER);
+        } else {
+            wp_enqueue_style('e20r-blur-pmpro-content', E20R_BLUR_PMPRO_PLUGIN_URL . '/css/e20r-blur-pmpro-content.css', null, E20R_BLUR_PMPRO_VER);
+        }
+
+        if ( file_exists( E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/e20r-blur-pmpro-content.min.js')) {
+            wp_enqueue_script('e20r-blur-pmpro-content', E20R_BLUR_PMPRO_PLUGIN_URL . '/js/e20r-blur-pmpro-content.min.js', array('jquery'), E20R_BLUR_PMPRO_VER, true);
+        }
+    }
+
+    public function remove_more_text($more) {
+        return '';
+    }
 
     /**
      * @param $content
@@ -100,14 +123,19 @@ class blur_pmpro_content
             // From: http://stackoverflow.com/questions/24805636/wordpress-excerpt-by-second-paragraph
             // With gratitude to Clément Malet and Pieter Goosen
 
-            // $raw_content = $content;
-
-            // $content = get_the_content('');
+            $old_content = $content;
+            $content = $post->post_content;
             $content = strip_shortcodes($content);
             $raw_content = $content;
+            // $content = apply_filters('the_content', $content);
+            $content = wpautop($content);
+            $content = $this->fix_autop($content);
+            // $content = str_replace('...', '', $content);
 
             ini_set('xdebug.var_display_max_data', -1);
             ini_set('xdebug.var_display_max_depth', 10);
+
+            // var_dump($content);
 
             $pattern = "/(\\<a.*\\<\\/a\\>)|(\\<img.*\\>)|(\\<h[1-6]\\>.*\\<\\/h[1-6]\\>)|(\\<blockquote.*\\/blockquote\\>)|(\\<em.*\\/em\\>)|\\<strong.*\\/strong\\>/i";
             $has_html = preg_match_all($pattern, $content, $matches);
@@ -115,12 +143,101 @@ class blur_pmpro_content
 
             if ($has_html && !empty($content)) {
 
-                if (strlen($content) != strlen($post->post_content)) {
-                    $content = $post->post_content;
+                if (!empty($post->post_excerpt)) {
+
+                    $regular_text = $this->fix_autop(wpautop($post->post_excerpt));
+                    $blurred_text = $content;
+
+                } else {
+
+                    $blurred_text = $content;
+                    $regular_text = $content;
                 }
 
+                $blurred_text = (false !== strrpos($blurred_text, '<p>', -strlen($blurred_text)) ? $blurred_text : "<p>$blurred_text</p>");
+                $regular_text = (false !== strrpos($regular_text, '<p>', -strlen($regular_text)) ? $regular_text : "<p>$regular_text</p>");;
+
+                $bt = explode('</p>', $blurred_text);
+                $rt = explode('</p>', $regular_text);
+
+                $rt_to_add = array();
+
+                for ($i = 0; $i < $this->options['paragraphs']; ++$i) {
+
+                    if (isset($rt[$i]) && !empty($rt[$i])) {
+
+                        $rt_to_add[$i] = $rt[$i];
+                    }
+                }
+
+                e20rbpp_write_log("Requested {$this->options['paragraphs']} paragraphs w/standard content. Got: " . count($rt_to_add));
+                $regular_text = $this->fix_autop($regular_text);
+                $regular_text = implode('</p>', $rt_to_add);
+
+                //reset the variables
+                $bt_to_add = array();
+
+                e20rbpp_write_log("The content of the blurred text variable:");
+                e20rbpp_write_log($bt);
+
+                // Obfuscate the rest of the content.
+                $remainder = ( count($bt) >= $this->options['paragraphs']) ? ((count($bt) - $this->options['paragraphs'])) : $this->options['paragraphs'];
+                $start = ($this->options['paragraphs']);
+
+                e20rbpp_write_log("Blurring content: {$remainder} paragraphs, starting at {$start}");
+                $i = 0;
+
+                for ( $i = $start; $i < $remainder ; ++$i) {
+
+                    $words = array();
+
+                    if ( isset($bt[$i]) && !empty($bt[$i]) ) {
+
+                        $bt_to_add[$i] = $bt[$i];
+                    }
+                }
+/*
+
+                 foreach (explode(" ", $bt[$i]) as $word) {
+
+                            $org = $word;
+
+                            $word = preg_replace_callback(
+                                '/!!(.*)!!/',
+                                function ($matches) use ($elements) {
+
+                                    e20rbpp_write_log("Found match for: {$matches[0]}");
+                                    e20rbpp_write_log("Returning: {$elements[$matches[0]]}");
+                                    // print var_dump($matches);
+                                    return $elements[$matches[0]];
+                                },
+                                $word
+                            );
+
+                            $rand = (false !== strpos($bt[$i], "!!") ? $word : $this->randomize_text($word));
+
+                            if (false === strpos($bt[$i], "!!") && strlen($rand) != strlen($org)) {
+
+                                if (1 == preg_match('/(\\<p\\>)/', $org)) {
+                                    $rand = '<p>' . $rand;
+                                }
+
+                                if (1 == preg_match('/(\\<\\/p\\>)/', $org)) {
+                                    $rand = $rand . '</p>';
+                                }
+                            }
+
+                            $words[] = $rand;
+                        }
+
+                        $bt[$i] = implode(" ", $words) . ".";
+*/
+
+                $blurred_text = implode('</p>', $bt_to_add);
+                $blurred_text = str_replace(']]>', ']]&gt;', $blurred_text);
+
                 $dom = new \DOMDocument('1.0', 'UTF-8');
-                $dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+                $dom->loadHTML($blurred_text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
                 // $non_html = $dom->textContent;
 
@@ -144,6 +261,7 @@ class blur_pmpro_content
                         $prepared["!!{$e}_element_{$a_idx}!!"] = $dom->saveHTML($elem);
                         // $nodes->item($a_idx)->parentNode->removeChild($elem);
                         $innerHtml = $this->innerHTML($nodes->item($a_idx)->cloneNode(), true, false);
+                        e20rbpp_write_log("Inner HTML: ");
                         e20rbpp_write_log($innerHtml);
                         $nodes->item($a_idx)->nodeValue = "!!{$e}_element_{$a_idx}!!";
                     }
@@ -153,120 +271,63 @@ class blur_pmpro_content
 
                 $content = $dom->saveHTML();
                 $content = str_replace('&Acirc;&nbsp;', ' ', $content);
-                $content = wpautop($content);
-
-
-                // e20rbpp_write_log($content);
-
-                if (!empty($post->post_excerpt)) {
-
-                    $regular_text =(false !== strrpos($post->post_excerpt, '<p>', -strlen($post->post_excerpt)) ? $post->post_excerpt : "<p>$post->post_excerpt</p>");
-
-                } else {
-
-                    $regular_text = (false !== strrpos($content, '<p>', -strlen($content)) ? $content : "<p>$content</p>");;
-                }
-
-                $blurred_text = (false !== strrpos($content, '<p>', -strlen($content)) ? $content : "<p>$content</p>");
-
-                $e = explode('</p>', $regular_text);
-                $e_to_add = array();
-
-                for ($i = 0; $i < $this->options['paragraphs']; ++$i) {
-
-                    if (isset($e[$i]) && !empty($e[$i])) {
-
-                        $e_to_add[$i] = $e[$i];
-                    }
-                }
-
-                e20rbpp_write_log("Requested {$this->options['paragraphs']} paragraphs unblurred. Got: " . count($e_to_add));
-
-                $regular_text = implode('</p>', $e_to_add);
-
-                $regular_text = $this->fix_autop($regular_text);
-
-                //reset the variables
-                $e_to_add = array();
-                $e = null;
-
-                e20rbpp_write_log("The content of the blurred text variable:");
-
-                $e = explode('</p>', $blurred_text) . "</p>";
-                e20rbpp_write_log($e);
-
-                // Obfuscate the rest of the content.
-                $remainder = ( count($e) >= $this->options['paragraphs']) ? ((count($e) - $this->options['paragraphs']) - 1) : $this->options['paragraphs'];
-                $start = ($this->options['paragraphs']);
-
-                e20rbpp_write_log("Blurring content: {$remainder} paragraphs, starting at {$start}");
-                $i = 0;
-
-                for ( $i = $start; $i < $remainder ; ++$i) {
-
-                    $words = array();
-
-                    if ( isset($e[$i]) && !empty($e[$i]) ) {
-
-                        foreach (explode(" ", $e[$i]) as $word) {
-
-                            $org = $word;
-
-                            $word = preg_replace_callback(
-                                "/\\!\\!\\(.*\\)\\!\\!/",
-                                function ($matches) use ($elements) {
-
-                                    e20rbpp_write_log("Found match for: {$matches[0]}");
-                                    // print var_dump($matches);
-                                    return $elements[$matches[0]];
-                                },
-                                $word
-                            );
-
-                            $rand = (false !== strpos($org, "!!") ? $word : $this->randomize_text($word));
-
-                            if (false === strpos($org, "!!") && strlen($rand) != strlen($org)) {
-
-                                if (1 == preg_match('/(\\<p\\>)/', $org)) {
-                                    $rand = '<p>' . $rand;
-                                }
-
-                                if (1 == preg_match('/(\\<\\/p\\>)/', $org)) {
-                                    $rand = $rand . '</p>';
-                                }
-                            }
-
-                            $words[] = $rand;
-                        }
-                    }
-
-                    // print var_dump($words);
-                    $e[$i] = implode(" ", $words) . ".";
-                    $e_to_add[$i] = ucfirst($e[$i]);
-
-                }
-
-
-
-                $blurred_text = implode('</p>', $e_to_add);
-                $blurred_text = str_replace(']]>', ']]&gt;', $blurred_text);
+                // $content = wpautop($content);
 
                 //$content_end = '';
                 //$content_end = ' <a href="' . esc_url(get_permalink()) . '">' . '&nbsp;&raquo;&nbsp;' . sprintf(__('Read more: %s &nbsp;&raquo;', 'e20rblurppc'), get_the_title()) . '</a>';
                 //$content_more = apply_filters('excerpt_more', ' ' . $content_end);
 
                 // $content .= $content_end;
-                $regular_text .= '<div class=""><!--googleoff: index-->';
-                $blurred_text .= '</div><!--googleon: index-->';
+                $regular_text = '<div class="e20r-visible-content">' . $regular_text . '</div>';
+                $regular_text .= '<div class="e20r-blurred-content-overlay">' .  $this->load_overlay() .'<!--googleoff: index--><div class="e20r-blurred-content">';
+                $blurred_text .= '</div><!--googleon: index--></div>';
 
                 $content = $regular_text . $blurred_text;
-                $content = wpautop($content);
+                // $content = wpautop($content);
 
                 // print var_dump($content);
             }
+
         }
 
         return $content;
+    }
+    public function set_levels() {
+
+        global $post;
+        global $current_user;
+
+        $level_info = pmpro_has_membership_access($post->ID, $current_user->ID, true);
+        $reqd = $level_info[1];
+
+        foreach( $reqd as $level_id ) {
+
+            $reqd_levels[$level_id] = pmpro_getLevel($level_id);
+        }
+
+        return $reqd_levels;
+
+    }
+
+    private function load_overlay() {
+
+        add_filter('pmpro_levels_array', array($this, 'set_levels'), 99 );
+
+        $levels_page = get_option( 'pmpro_levels_page_id' );
+        $lvlpage = get_post($levels_page);
+
+        e20rbpp_write_log("Levels page is on ID: {$levels_page}");
+
+        ob_start();
+        ?>
+        <div class="e20r-blur-call-to-action">
+            <h2 class="e20r-blur-cta-h1"><?php echo apply_filters('e20rbpc-cta-headline-2', __("Unlock the content", "e20rbpc"));?></h2>
+            <h3 class="e20r-blur-cta-h3"><?php echo apply_filters('e20rbpc-cta-headline-3', __("Click the checkout button and get access today", "e20rbpc")); ?></h3>
+            <?php echo do_shortcode($lvlpage->post_content);?>
+        </div>
+        <?php
+
+        return ob_get_clean();
     }
 
     private function innerHTML( \DOMNode $node, $trim = true, $decode = true) {
@@ -319,7 +380,7 @@ class blur_pmpro_content
      * @visibility private
      * @since 0.1
      */
-    private function get_the_excerpt($content)
+/*    private function get_the_excerpt($content)
     {
 
         if (null !== $this->options['word_count']) {
@@ -327,6 +388,6 @@ class blur_pmpro_content
         }
 
         return $excerpt;
-
     }
+*/
 }
