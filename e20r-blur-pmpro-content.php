@@ -5,7 +5,7 @@ use E20R\BLUR_PMPRO_CONTENT as BPPC;
 Plugin Name: Eighty/20 Results - Blur PMPro Content (Add On)
 Plugin URI: https://www.eighty20results.com/blur-pmpro-content/
 Description: Integrates with Paid Memberships Pro to deliver a more SEO friendly way to hide/obfuscate post PMPro content.
-Version: .1
+Version: .3
 Author: Eighty/20 Results
 Author URI: http://www.eighty20results.com/thomas-sjolshagen
 */
@@ -18,7 +18,7 @@ Author URI: http://www.eighty20results.com/thomas-sjolshagen
     - CTA is starting point for sign up/sign in to the preferred membership level.
 */
 
-define('E20R_BLUR_PMPRO_VER', '0.1');
+define('E20R_BLUR_PMPRO_VER', '0.3');
 define('E20R_BLUR_PMPRO_PLUGIN_URL', plugins_url('', __FILE__));
 define('E20R_BLUR_PMPRO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
