@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-include=(classes css img js languages e20r-tracker.php e20r_db_update.php README.txt)
+include=(classes css js languages e20r-blur-pmpro-content.php readme.txt)
 exclude=(vendor *.yml *.phar composer.*)
 short_name="e20r-blur-pmpro-content"
 plugin_path="${short_name}"
@@ -31,27 +31,6 @@ then
     rm -f ${kit_name}
 fi
 
-#if [[ -f ${readme_path}${json_template} ]]
-#then
-#    echo "Building metadata.json file"
-#    meta_log=$(sed -e"s/\"/\'/g" -e"s/.*/\<li\>&\<\/li\>/" ${changelog_source} )
-#    #history=$(cat ${meta_log_source})
-#    to_file="\<h3\>${version}\<\/h3\>\<ol\>${meta_log}\<\/ol\>$(cat ${meta_log_source})"
-#    fix_line=$(echo ${meta_log} | tr -d '\n')
-#    sed -e "s/\[JSON_LOG\]/$to_file" -e "s/\[VERSION\]/$version" ${json_template} > ${metadata}
-#fi
-
-#if [[ -f ${readme_path}${readme_template} ]]
-#then
-#    echo "Building metadata.json file"
-#    meta_log=$(sed -e"s/\"/\'/g" -e"s/.*/\*\ &/" ${changelog_source} )
-#    #history=$(cat ${readme_source})
-#    header="== ${version} =="
-#    content="${meta_log}"
-#    new=$(cat ${readme_source})
-#    all="${header}\n\n{$content}${new}"
-#    sed -e "s/\[MARKDOWN_LOG\]/${all}}" -e "s/\[VERSION\]/${version}/" ${readme_template} > ${readme_txt}
-#fi
 
 for p in ${include[@]}; do
 	cp -R ${src_path}${p} ${dst_path}
@@ -63,7 +42,7 @@ done
 
 cd ${dst_path}/..
 zip -r ${kit_name}.zip ${plugin_path}
-scp ${kit_name}.zip siteground-e20r:./www/protected-content/e20r-tracker/
-scp ${metadata} siteground-e20r:./www/protected-content/e20r-tracker/
+scp ${kit_name}.zip siteground-e20r:./www/protected-content/e20r-blur-pmpro-content/
+scp ${metadata} siteground-e20r:./www/protected-content/e20r-blur-pmpro-content/
 ssh siteground-e20r "cd ./www/protected-content/ ; ln -sf \"${short_name}\"/\"${short_name}\"-\"${version}\".zip \"${short_name}\".zip"
 rm -rf ${dst_path}
