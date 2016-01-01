@@ -31,6 +31,11 @@ Please post it in the GitHub issue tracker here: https://github.com/eighty20resu
 Please visit our support site at http://www.eighty20results.com for more documentation and our support forums.
 
 == Changelog ==
+= .5 =
+* Fix: Path to update checker
+* Enh: Update tags in readme.txt
+
+
 = .4 =
 * Fix: Paths to build environment
 * Enh: Adding build infrastructure for plugin

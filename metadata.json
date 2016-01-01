@@ -1,8 +1,8 @@
 {
   "name" : "E20R Blur PMPro Content Add-on",
   "slug" : "e20r-blur-pmpro-content",
-  "download_url" : "https://eighty20results.com/protected-content/e20r-blur-pmpro-content/e20r-blur-pmpro-content-0.4.zip",
-  "version" : "0.4",
+  "download_url" : "https://eighty20results.com/protected-content/e20r-blur-pmpro-content/e20r-blur-pmpro-content-0.5.zip",
+  "version" : "0.5",
   "tested": "4.4",
   "requires": "3.7",
   "author" : "Eighty/20 Results by Wicked Strong Chicks, LLC <info@eighty20results.com>",
@@ -10,8 +10,8 @@
   "last_updated": "2016-01-01 15:30:00",
   "homepage": "https://eighty20results.com/plugins/e20r-blur-pmpro-content",
   "sections" : {
-    "description" : "Integrates with Paid Memberships Pro (buy strangerstudios) to hide  content (encrypt & blur) with a pretty overlay & call to action when content is protected by a PMPro membership level.",
-    "changelog": "<h3>.4</h3><ol><li>Enh: Adding build infrastructure for plugin</li><li>Enh: Add plugin update checker</li><li>Enh: Remove unneeded text replace.</li><li>Enh: CTA headline change</li><li>Fix: Paths to build environment</li></ol>"
+    "description" : "<p>Integrates with Paid Memberships Pro (buy strangerstudios) to hide  content (encrypt & blur) with a pretty overlay & call to action when content is protected by a PMPro membership level.</p>",
+    "changelog": "<h3>0.5</h3><ol><li>Fix: Path to update checker</li><li>Enh: Update tags in readme.txt</li></ol><h3>0.4</h3><ol><li>Enh: Adding build infrastructure for plugin</li><li>Enh: Add plugin update checker</li><li>Enh: Remove unneeded text replace.</li><li>Enh: CTA headline change</li><li>Fix: Paths to build environment</li></ol>"
   }
 }
 
