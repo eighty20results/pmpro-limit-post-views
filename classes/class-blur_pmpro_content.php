@@ -255,8 +255,6 @@ class blur_pmpro_content
                 $regular_text = implode('</p>', $rt_to_add) . '</p>';
                 $regular_text = $this->br2nl($regular_text);
 
-                e20rbpc_write_log($regular_text);
-
                 e20rbpc_write_log("Making remaining content unreadable, starting at {$start}");
                 $i = 0;
 
@@ -427,7 +425,6 @@ class blur_pmpro_content
      */
     public function set_levels()
     {
-
         global $post;
         global $current_user;
 
