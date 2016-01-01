@@ -18,9 +18,12 @@ Author URI: http://www.eighty20results.com/thomas-sjolshagen
     - CTA is starting point for sign up/sign in to the preferred membership level.
 */
 
+define(__NAMESPACE__ . '\NS', __NAMESPACE__ . '\\');
+
 define('E20R_BLUR_PMPRO_VER', '0.3');
 define('E20R_BLUR_PMPRO_PLUGIN_URL', plugins_url('', __FILE__));
 define('E20R_BLUR_PMPRO_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define( 'E20R\BLUR_PMPRO_CONTENT\NS\E20R_MAX_LOG_SIZE', 1024 * 2014 * 3); // In MB
 
 if ( !function_exists( "\\e20rbpc_autoloader")):
 
@@ -48,6 +51,12 @@ if ( !function_exists( "\\e20rbpc_autoloader")):
 endif;
 
 if (!function_exists('e20rbpc_write_log')) {
+    /**
+     * Logger for debug info from plugin. Only logs if WP_DEBUG == true
+     *
+     * @param $msg - DEBUG info to log to separate logfile
+     * @since 0.1
+     */
     function e20rbpc_write_log($msg)
     {
 
@@ -91,6 +100,12 @@ if (!function_exists('e20rbpc_write_log')) {
 
 if (!function_exists('e20rbpc_add_text')) {
 
+    /**
+     * Rotate debug log based on file size constant:
+     * @param $text - Text to write to the specified file
+     *
+     * @param $filename -- File name to log to.
+     */
     function e20rbpc_add_text($text, $filename)
     {
 
@@ -100,7 +115,7 @@ if (!function_exists('e20rbpc_add_text')) {
             chmod($filename, 0640);
         }
 
-        if (filesize($filename) > E20R_MAX_LOG_SIZE) {
+        if (filesize($filename) > BPPC\NS\E20R_MAX_LOG_SIZE) {
 
             $filename2 = "$filename.old";
 
