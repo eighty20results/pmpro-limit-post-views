@@ -58,7 +58,7 @@ function e20rbpc_settings_ctapage($args) {
 		)
 	);
 
-	e20rbpp_write_log("Current CTA page: {$options['ctapage']}");
+	e20rbpc_write_log("Current CTA page: {$options['ctapage']}");
 }
 
 
