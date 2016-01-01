@@ -146,11 +146,20 @@ class blur_pmpro_content
             );
         }
 
-        //Allow loading of CSS from user's template directory
         if (file_exists(get_template_directory() . '/e20r-style/e20r-blur-pmpro-content.css')) {
             wp_enqueue_style(
                 'e20r-blur-pmpro-content-user',
                 get_template_directory_uri() . '/e20r-style/e20r-blur-pmpro-content.css',
+                array('e20r-blur-pmpro-content'),
+                E20R_BLUR_PMPRO_VER
+            );
+        }
+
+        //Allow loading of CSS from user's template directory
+        if (file_exists(get_stylesheet_directory() . '/e20r-style/e20r-blur-pmpro-content.css')) {
+            wp_enqueue_style(
+                'e20r-blur-pmpro-content-user',
+                get_stylesheet_directory_uri() . '/e20r-style/e20r-blur-pmpro-content.css',
                 array('e20r-blur-pmpro-content'),
                 E20R_BLUR_PMPRO_VER
             );
