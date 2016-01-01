@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-include=(classes css js languages e20r-blur-pmpro-content.php readme.txt)
+include=(adminpages classes css includes js languages e20r-blur-pmpro-content.php readme.txt)
 exclude=(vendor *.yml *.phar composer.*)
 short_name="e20r-blur-pmpro-content"
 plugin_path="${short_name}"
