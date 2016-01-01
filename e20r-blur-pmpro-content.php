@@ -47,8 +47,8 @@ if ( !function_exists( "\\e20rbpc_autoloader")):
     }
 endif;
 
-if (!function_exists('e20rbpp_write_log')) {
-    function e20rbpp_write_log($msg)
+if (!function_exists('e20rbpc_write_log')) {
+    function e20rbpc_write_log($msg)
     {
 
         $uplDir = wp_upload_dir();
@@ -84,14 +84,14 @@ if (!function_exists('e20rbpp_write_log')) {
             $dbgMsg = '(' . date('d-m-y H:i:s', current_time('timestamp')) . "-{$tid}) -- " .
                 ( is_array($msg) || is_object($msg) ? print_r($msg, true) : $msg) . "\n";
 
-            e20rbpp_add_text($dbgMsg, $dbgFile);
+            e20rbpc_add_text($dbgMsg, $dbgFile);
         }
     }
 }
 
-if (!function_exists('e20rbpp_add_text')) {
+if (!function_exists('e20rbpc_add_text')) {
 
-    function e20rbpp_add_text($text, $filename)
+    function e20rbpc_add_text($text, $filename)
     {
 
         if (!file_exists($filename)) {

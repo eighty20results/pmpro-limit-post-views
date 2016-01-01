@@ -248,16 +248,16 @@ class blur_pmpro_content
                     }
                 }
 
-                e20rbpp_write_log("Requested {$this->options['paragraphs']} paragraphs w/standard content. Got: " . count($rt_to_add));
+                e20rbpc_write_log("Requested {$this->options['paragraphs']} paragraphs w/standard content. Got: " . count($rt_to_add));
 
                 //Make remaining content mostly unreadable.
 
                 $regular_text = implode('</p>', $rt_to_add) . '</p>';
                 $regular_text = $this->br2nl($regular_text);
 
-                e20rbpp_write_log($regular_text);
+                e20rbpc_write_log($regular_text);
 
-                e20rbpp_write_log("Making remaining content unreadable, starting at {$start}");
+                e20rbpc_write_log("Making remaining content unreadable, starting at {$start}");
                 $i = 0;
 
                 for ($i = $start; $i < count($bt); $i++) {
@@ -298,7 +298,7 @@ class blur_pmpro_content
     {
 
         if (empty($paragraph) || 0 != preg_match('/^\s+$/', $paragraph)) {
-            e20rbpp_write_log("Skipping line, it's empty");
+            e20rbpc_write_log("Skipping line, it's empty");
             return $paragraph;
         }
 
@@ -462,7 +462,7 @@ class blur_pmpro_content
             $levels_page = $options['ctapage'];
         }
 
-        e20rbpp_write_log("CTA page ID: {$levels_page}");
+        e20rbpc_write_log("CTA page ID: {$levels_page}");
         $lvlpage = get_post($levels_page);
 
         ob_start();
@@ -520,7 +520,7 @@ class blur_pmpro_content
             $post_id = $post->ID;
         }
 
-        e20rbpp_write_log("Checking whether {$post_id} is protected by PMPro");
+        e20rbpc_write_log("Checking whether {$post_id} is protected by PMPro");
         $level_info = \pmpro_has_membership_access($post_id, $current_user->ID, true);
 
         return isset($level_info[1]);
