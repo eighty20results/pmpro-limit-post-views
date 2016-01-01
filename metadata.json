@@ -10,8 +10,8 @@
   "last_updated": "2016-01-01 15:30:00",
   "homepage": "https://eighty20results.com/plugins/e20r-blur-pmpro-content",
   "sections" : {
-    "description" : "",
-    "changelog": ""
+    "description" : "Integrates with Paid Memberships Pro (buy strangerstudios) to hide  content (encrypt & blur) with a pretty overlay & call to action when content is protected by a PMPro membership level.",
+    "changelog": "<h3>.4</h3><ol><li>Enh: Adding build infrastructure for plugin</li><li>Enh: Add plugin update checker</li><li>Enh: Remove unneeded text replace.</li><li>Enh: CTA headline change</li><li>Fix: Paths to build environment</li></ol>"
   }
 }
 

@@ -1,0 +1,5 @@
+Enh: Adding build infrastructure for plugin
+Enh: Add plugin update checker
+Enh: Remove unneeded text replace.
+Enh: CTA headline change
+Fix: Paths to build environment
