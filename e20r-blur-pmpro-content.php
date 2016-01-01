@@ -1,12 +1,11 @@
 <?php
-
 use E20R\BLUR_PMPRO_CONTENT as BPPC;
 /*
-Plugin Name: Eighty/20 Results - Blur PMPro Content (Add On)
-Plugin URI: https://www.eighty20results.com/blur-pmpro-content/
+Plugin Name: Eighty/20 Results - Blur PMPro Content (Add-on)
+Plugin URI: https://www.eighty20results.com/plugins/e20r-blur-pmpro-content/
 Description: Integrates with Paid Memberships Pro to deliver a more SEO friendly way to hide/obfuscate post PMPro content.
-Version: 0.5
-Author: Eighty/20 Results
+Version: 0.7
+Author: Thomas Sjolshagen (Eighty/20 Results)
 Author URI: http://www.eighty20results.com/thomas-sjolshagen
 */
 /*
@@ -20,7 +19,7 @@ Author URI: http://www.eighty20results.com/thomas-sjolshagen
 
 define(__NAMESPACE__ . '\NS', __NAMESPACE__ . '\\');
 
-define('E20R_BLUR_PMPRO_VER', '0.3');
+define('E20R_BLUR_PMPRO_VER', '0.7');
 define('E20R_BLUR_PMPRO_PLUGIN_URL', plugins_url('', __FILE__));
 define('E20R_BLUR_PMPRO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define( 'E20R\BLUR_PMPRO_CONTENT\NS\E20R_MAX_LOG_SIZE', 1024 * 2014 * 3); // In MB

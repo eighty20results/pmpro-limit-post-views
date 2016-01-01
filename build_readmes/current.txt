@@ -1,2 +1,4 @@
-Fix: Path to update checker
-Enh: Update tags in readme.txt
+Fix: Path to master & child theme hosted e20r-style CSS files.
+Enh: Add initial styling for default level(s) page in CTA
+Enh: Allow user to load own CSS file (stored in active theme's directory under /e20r-styles)
+Enh: Clean up code (don't leave unused variables, remove xdebug settings, etc)

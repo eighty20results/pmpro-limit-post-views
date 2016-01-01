@@ -1,4 +1,4 @@
-=== Eighty / 20 Results - Blur PMPro Content Add On ===
+=== Eighty / 20 Results - Blur PMPro Content (Add-on) ===
 Contributors: eighty20results
 Tags: paid memberships pro, pmpro, dagbladet, post encryption, hide content, seo friendly
 Requires at least: 3.7
@@ -31,10 +31,15 @@ Please post it in the GitHub issue tracker here: https://github.com/eighty20resu
 Please visit our support site at http://www.eighty20results.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.7 =
+* Fix: Path to master & child theme hosted e20r-style CSS files.
+* Enh: Add initial styling for default level(s) page in CTA
+* Enh: Allow user to load own CSS file (stored in active theme's directory under /e20r-styles)
+* Enh: Clean up code (don't leave unused variables, remove xdebug settings, etc)
+
 = .5 =
 * Fix: Path to update checker
 * Enh: Update tags in readme.txt
-
 
 = .4 =
 * Fix: Paths to build environment
