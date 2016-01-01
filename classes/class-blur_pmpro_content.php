@@ -97,6 +97,7 @@ class blur_pmpro_content
             );
         }
 
+        // Load Debug or non-debug version(s) of the JS file(s).
         if (false === WP_DEBUG &&
             file_exists(E20R_BLUR_PMPRO_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js')
         ) {
@@ -122,6 +123,7 @@ class blur_pmpro_content
             );
         }
 
+        // Load Debug or non-debug version(s) of the JS file(s).
         if (false === WP_DEBUG &&
             file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/e20r-blur-pmpro-content.min.js')
         ) {
@@ -144,7 +146,15 @@ class blur_pmpro_content
             );
         }
 
-
+        //Allow loading of CSS from user's template directory
+        if (file_exists(get_template_directory() . '/e20r-style/e20r-blur-pmpro-content.css')) {
+            wp_enqueue_style(
+                'e20r-blur-pmpro-content-user',
+                get_template_directory_uri() . '/e20r-style/e20r-blur-pmpro-content.css',
+                array('e20r-blur-pmpro-content'),
+                E20R_BLUR_PMPRO_VER
+            );
+        }
     }
 
     /**
@@ -200,12 +210,7 @@ class blur_pmpro_content
             // Inspired by http://stackoverflow.com/questions/24805636/wordpress-excerpt-by-second-paragraph
             // With gratitude to Clément Malet and Pieter Goosen
 
-            $unused = $content;
-
             $content = do_shortcode($post->post_content);
-            $raw_content = $content;
-
-//            $content = strip_shortcodes($content);
 
             $rt = null;
             $ct_array = explode(PHP_EOL, $content);
@@ -218,10 +223,6 @@ class blur_pmpro_content
             }
 
             unset($ct_array);
-
-            ini_set('xdebug.var_display_max_data', -1);
-            ini_set('xdebug.var_display_max_depth', 10);
-
             $pattern = "/(\\<a.*\\<\\/a\\>)|(\\<img.*\\>)|(\\<h[1-6]\\>.*\\<\\/h[1-6]\\>)|(\\<blockquote.*\\/blockquote\\>)|(\\<em.*\\/em\\>)|\\<strong.*\\/strong\\>/i";
             $has_html = preg_match($pattern, $content);
 
@@ -237,7 +238,6 @@ class blur_pmpro_content
                     $rt = explode(PHP_EOL, $post->post_excerpt);
                 }
 
-                // $remainder = (count($bt) >= $this->options['paragraphs']) ? ((count($bt) - $this->options['paragraphs'])) : $this->options['paragraphs'];
                 $start = ($this->options['paragraphs']);
 
                 for ($i = 0; $i < $this->options['paragraphs']; ++$i) {
@@ -251,7 +251,6 @@ class blur_pmpro_content
                 e20rbpc_write_log("Requested {$this->options['paragraphs']} paragraphs w/standard content. Got: " . count($rt_to_add));
 
                 //Make remaining content mostly unreadable.
-
                 $regular_text = implode('</p>', $rt_to_add) . '</p>';
                 $regular_text = $this->br2nl($regular_text);
 
@@ -270,6 +269,7 @@ class blur_pmpro_content
                 $blurred_text = implode(PHP_EOL, $bt_to_add);
                 $blurred_text = str_replace(']]>', ']]&gt;', $blurred_text);
 
+                // Build the structure of the visible and blurred content.
                 $regular_text = '<div class="e20r-visible-content">' . PHP_EOL . $regular_text . PHP_EOL . '</div>' . PHP_EOL;
                 $regular_text .= '<div class="e20r-blurred-content-overlay">' . $this->load_overlay() . '</div>' . PHP_EOL;
                 $regular_text .= '<!--googleoff: index-->'. PHP_EOL . '<div class="e20r-blurred-content">' . PHP_EOL;
@@ -351,8 +351,6 @@ class blur_pmpro_content
         if ( !empty($to_replace[0])) {
 
             // Have something to do...
-            // $tag_length = strlen($to_replace[0][0][0]) -1;
-
             $key = $to_replace[1][0][0];
             $start = $to_replace[0][0][1];
             $paragraph = substr_replace($paragraph, $this->elements[$key], $start, 0);
@@ -360,9 +358,7 @@ class blur_pmpro_content
 
         unset($doc);
 
-        // $paragraph = preg_replace('/\<br[\/|\s+\/]\>/', PHP_EOL, $paragraph);
         $paragraph = ucfirst($paragraph);
-
         return $paragraph;
 
     }
