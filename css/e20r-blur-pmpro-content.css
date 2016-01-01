@@ -35,6 +35,8 @@ div.e20r-blur-call-to-action {
     /* position: relative; */
     overflow: hidden;
     padding: 14px 10px 10px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .e20r-blur-call-to-action div.pmpro_level {
     max-width: 100%;
@@ -73,4 +75,18 @@ h3.e20r-blur-cta-h3 {
     text-align: center;
     color: #5c5c5c;
     margin: 10px;
+}
+div.e20r-blur-call-to-action div.pmpro_level {
+    width: 45%;
+    margin: 10px;
+}
+div.e20r-blur-call-to-action .entry-meta {
+    margin: 32px 0 0;
+}
+div.e20r-blur-call-to-action .entry-meta .pmpro_btn {
+    width: 100%;
+    margin: 10px 0;
+}
+div.e20r-blur-call-to-action .entry {
+    margin: 0;
 }
