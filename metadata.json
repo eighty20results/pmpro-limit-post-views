@@ -1,0 +1,17 @@
+{
+  "name" : "E20R Blur PMPro Content Add-on",
+  "slug" : "e20r-blur-pmpro-content",
+  "download_url" : "https://eighty20results.com/protected-content/e20r-blur-pmpro-content/e20r-blur-pmpro-content-0.4.zip",
+  "version" : "0.4",
+  "tested": "4.4",
+  "requires": "3.7",
+  "author" : "Eighty/20 Results by Wicked Strong Chicks, LLC <info@eighty20results.com>",
+  "author_homepage": "https://eighty20results.com/thomas-sjolshagen",
+  "last_updated": "2016-01-01 15:30:00",
+  "homepage": "https://eighty20results.com/plugins/e20r-blur-pmpro-content",
+  "sections" : {
+    "description" : "",
+    "changelog": ""
+  }
+}
+
