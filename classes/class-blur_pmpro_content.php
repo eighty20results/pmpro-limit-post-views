@@ -179,8 +179,7 @@ class blur_pmpro_content
             // Inspired by http://stackoverflow.com/questions/24805636/wordpress-excerpt-by-second-paragraph
             // With gratitude to Clément Malet and Pieter Goosen
 
-            $content = shortcode_unautop($post->post_content);
-            $content = do_shortcode($content);
+            $content = $this->reapply_filters($post->post_content);
 
             $rt = null;
             $ct_array = explode(PHP_EOL, $content);
@@ -215,6 +214,11 @@ class blur_pmpro_content
             // Process content that should remain visible.
             for ($i = 0; $i < $this->options['paragraphs']; ++$i) {
 
+                if (0 != preg_match('/\[.*\]/', $rt[$i], $m)) {
+
+                    $rt[$i] = preg_replace("/\[.*\]/", '', $rt[$i]);
+                }
+
                 if (isset($rt[$i]) && !empty($rt[$i])) {
 
                     $rt_to_add[$i] = '<p>' . $rt[$i];
@@ -226,15 +230,7 @@ class blur_pmpro_content
             //Make remaining content mostly unreadable.
             $regular_text = implode('</p>', $rt_to_add) . '</p>';
 
-            remove_filter('the_content', array($this, 'encode_content'), 999);
-            remove_filter('get_the_excerpt', array($this, 'encode_content'), 999);
-            remove_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
-
-            $regular_text = apply_filters('the_content', $regular_text);
-
-            add_filter('the_content', array($this, 'encode_content'), 999);
-            add_filter('get_the_excerpt', array($this, 'encode_content'), 999);
-            add_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
+            $regular_text = $this->reapply_filters($regular_text);
 
             e20rbpc_write_log("Making remaining content unreadable, starting at {$start}");
 
@@ -252,6 +248,8 @@ class blur_pmpro_content
                         if ($bt[$i] == '') {
                             continue;
                         }
+                        // $bt[$i] = '<p>' . $bt[$i];
+
 /*                        } else {
                         e20rbpc_write_log("Processing shortcode: {$bt[$i]}");
                         $bt[$i] = do_shortcode($bt[$i]);
@@ -261,50 +259,39 @@ class blur_pmpro_content
                 }
             }
 
-            $blurred_text = implode(PHP_EOL, $bt_to_add);
+            $blurred_text = implode(PHP_EOL, $bt_to_add) . PHP_EOL;
             $blurred_text = str_replace(']]>', ']]&gt;', $blurred_text);
 
-            remove_filter('the_content', array($this, 'encode_content'), 999);
-            remove_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
-            remove_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
-
-            $blurred_text = apply_filters('the_content', $blurred_text);
-
-            add_filter('the_content', array($this, 'encode_content'), 999);
-            add_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
-            add_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
+            $blurred_text = $this->reapply_filters($blurred_text);
 
             // Build the structure of the visible and blurred content.
-            $regular_text = '<div class="e20r-visible-content">' . PHP_EOL . $regular_text . PHP_EOL . '</div>' . PHP_EOL;
+            $regular_text = '<div class="e20r-blur-content-wrapper clear-after"><div class="e20r-visible-content">' . PHP_EOL . $regular_text . PHP_EOL . '</div>' . PHP_EOL;
             $regular_text .= '<div class="e20r-blurred-content-overlay">' . $this->load_overlay() . '</div>' . PHP_EOL;
             $regular_text .= '<!--googleoff: index-->'. PHP_EOL . '<div class="e20r-blurred-content">' . PHP_EOL;
 
-            $blurred_text .= PHP_EOL . '<!--googleon: index--></div>';
+            $blurred_text .= PHP_EOL . '</div>' . PHP_EOL . '</div><!--googleon: index-->';
 
             $content = $regular_text . $blurred_text . PHP_EOL;
             // }
         }
 /**/
+        $this->reapply_filters($content);
+        $this->reset_filters();
+
+        return $content;
+    }
+
+    private function reapply_filters( $content ) {
+
         remove_filter('the_content', array($this, 'encode_content'), 999);
         remove_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
         remove_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
 
-        $content = apply_filters('the_content', $content);
+        $content = apply_filters('the_content', trim($content));
 
         add_filter('the_content', array($this, 'encode_content'), 999);
         add_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
         add_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
-/*
-            $content = wptexturize($content);
-            $content = convert_smilies($content);
-            $content = wpautop($content);
-            $content = shortcode_unautop($content);
-            $content = prepend_attachment($content);
-            $content = wp_make_content_images_responsive($content);
-            $content = do_shortcode($content);
-            $content = capital_P_dangit($content);
-*/
-        $this->reset_filters();
 
         return $content;
     }
@@ -492,7 +479,7 @@ class blur_pmpro_content
 
         ob_start();
         ?>
-        <div class="e20r-blur-call-to-action">
+        <div class="e20r-blur-call-to-action clear-after">
             <div class="e20r-blur-header"><h2 class="e20r-blur-cta-h1"><?php echo apply_filters('e20rbpc-cta-headline-2', __("Unlock this content", "e20rbpc")); ?></h2><span class="e20r-blur-cta-login"><?php echo apply_filters('e20rbpc-cta-login',
                         sprintf(
                             "<a href=\"%s\" title=\"%s\">%s</a>",
