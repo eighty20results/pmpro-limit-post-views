@@ -68,8 +68,6 @@ div.e20r-blurred-content * img {
 h2.e20r-blur-cta-h1 {
     font-size: 1.5rem;
     text-align: center;
-    padding: 10px 10px 5px 10px;
-    border-bottom: 3px solid #333;
 }
 h3.e20r-blur-cta-h3 {
     text-align: center;
@@ -89,4 +87,26 @@ div.e20r-blur-call-to-action .entry-meta .pmpro_btn {
 }
 div.e20r-blur-call-to-action .entry {
     margin: 0;
+}
+div.e20r-blur-header {
+    background-color: orange;
+    border-bottom: 3px solid #ddd;
+    color: #fff;
+    padding: 10px 10px 5px 10px;
+}
+span.e20r-blur-cta-login {
+    float: right;
+    right: 10px;
+    bottom: 25px;
+    position: relative;
+    diplay: inline-block !important;
+    color: #fff;
+    text-decoration: underline;
+}
+span.e20r-blur-cta-login > a:visited,
+span.e20r-blur-cta-login > a:hover,
+span.e20r-blur-cta-login > a {
+    color: #fff;
+    font-weight: 700;
+    vertical-align: text-bottom;
 }
