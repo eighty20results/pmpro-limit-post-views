@@ -3,7 +3,7 @@ Contributors: eighty20results
 Tags: paid memberships pro, pmpro, dagbladet, post encryption, hide content, seo friendly
 Requires at least: 3.7
 Tested up to: 4.4
-Stable tag: 0.7.1
+Stable tag: 0.7.3
 
 Integrates with Paid Memberships Pro to hide  content (encrypt & blur) with a pretty overlay & call to action when content is protected by a PMPro membership level.
 
@@ -31,6 +31,23 @@ Please post it in the GitHub issue tracker here: https://github.com/eighty20resu
 Please visit our support site at http://www.eighty20results.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.7.3 =
+* Fix: Didn't display unprotected content properly.
+* Fix: Update CSS for CTA headline
+* Fix: Javascript for scrollToFixed and the plugin didn't load
+* Fix: More flexibility when centering the CTA in the content.
+* Fix: Load filter management once WP is loaded
+* Fix: Too much space between paragraphs in default CTA form
+* Fix: Didn't handle PMPro Excerpt and content filters well
+* Fix: Didn't return as clean of HTML as we'd like
+* Fix: Refactored class
+* Fix: Login link didn't always display in 'right' position
+* Enh: Allow CTA to scroll to top of page, then stay visible while content scrolls underneath (supports Genesis Themes)
+* Enh: Simplify content filter handling Enh: Simplify centering CTA for blurred content
+* Enh: Empty but protected page had CTA dropping below content.
+* Enh: Add clear fix for CTA
+* Enh: Simplify filter handling Enh: Change priority of excerpt & content filtering
+
 = 0.7.2 =
 * Fix: Didn't display unprotected content properly.
 * Update CSS for CTA headline
