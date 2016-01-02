@@ -38,6 +38,18 @@ class blur_pmpro_content
      */
     public function init() {
 
+        $this->clear_filters();
+
+        // Use our own excerpt & content filters
+        add_filter('excerpt_length', array($this, 'set_excerpt_length'), 999);
+        add_filter('wp_trim_excerpt', array($this, 'remove_more_text'), 999);
+        add_filter('the_content', array($this, 'encode_content'), 5);
+        add_filter('get_the_excerpt', array($this, 'encode_excerpt'), 5);
+        add_filter('the_excerpt', array($this, 'encode_excerpt'), 5);
+    }
+
+    private function clear_filters() {
+
         global $wp_filter;
 
         $this->the_content = $wp_filter['the_content'];
@@ -45,19 +57,38 @@ class blur_pmpro_content
         $this->wp_trim_excerpt = $wp_filter['wp_trim_excerpt'];
         $this->excerpt_length = $wp_filter['excerpt_length'];
 
+        remove_filter('the_excerpt', 'pmpro_membership_get_excerpt_filter', 15);
+        remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_start', 1);
+        remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_end', 100);
         remove_filter('the_content', 'pmpro_membership_content_filter', 5);
 
+
+        /*
         // Strip all excerpt & content filters
         remove_all_filters('get_the_excerpt');
         remove_all_filters('the_content');
         remove_all_filters('wp_trim_excerpt');
         remove_all_filters('excerpt_length');
+        */
+    }
 
-        // Use our own excerpt & content filters
-        add_filter('excerpt_length', array($this, 'set_excerpt_length'), 999);
-        add_filter('wp_trim_excerpt', array($this, 'remove_more_text'), 999);
-        add_filter('the_content', array($this, 'encode_content'), 999 );
-        add_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
+    /**
+     * Reset all of the filter(s) we removed on init.
+     */
+    private function reset_filters() {
+
+        /*
+        global $wp_filter;
+
+        $wp_filter['the_content'] = $this->the_content;
+        $wp_filter['get_the_excerpt'] = $this->get_the_excerpt;
+        $wp_filter['wp_trim_excerpt'] = $this->wp_trim_excerpt;
+        $wp_filter['excerpt_length'] = $this->excerpt_length;
+        */
+        add_filter('the_excerpt', 'pmpro_membership_get_excerpt_filter', 15);
+        add_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_start', 1);
+        add_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_end', 100);
+        add_filter('the_content', 'pmpro_membership_content_filter', 5);
     }
 
     /**
@@ -119,12 +150,14 @@ class blur_pmpro_content
 
         $pmpro_loaded = true;
 
+        $this->clear_filters();
+
         if (!function_exists('pmpro_has_membership_access')) {
 
             e20rbpc_write_log("No PMPRO present?");
             $pmpro_loaded = false;
 
-            return $content;
+            // return $content;
         }
 
         global $post, $current_user;
@@ -196,11 +229,13 @@ class blur_pmpro_content
 
             remove_filter('the_content', array($this, 'encode_content'), 999);
             remove_filter('get_the_excerpt', array($this, 'encode_content'), 999);
+            remove_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
 
             $regular_text = apply_filters('the_content', $regular_text);
 
             add_filter('the_content', array($this, 'encode_content'), 999);
             add_filter('get_the_excerpt', array($this, 'encode_content'), 999);
+            add_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
 
             e20rbpc_write_log("Making remaining content unreadable, starting at {$start}");
 
@@ -232,11 +267,13 @@ class blur_pmpro_content
 
             remove_filter('the_content', array($this, 'encode_content'), 999);
             remove_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
+            remove_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
 
             $blurred_text = apply_filters('the_content', $blurred_text);
 
             add_filter('the_content', array($this, 'encode_content'), 999);
             add_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
+            add_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
 
             // Build the structure of the visible and blurred content.
             $regular_text = '<div class="e20r-visible-content">' . PHP_EOL . $regular_text . PHP_EOL . '</div>' . PHP_EOL;
@@ -248,15 +285,17 @@ class blur_pmpro_content
             $content = $regular_text . $blurred_text . PHP_EOL;
             // }
         }
-
+/**/
         remove_filter('the_content', array($this, 'encode_content'), 999);
         remove_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
+        remove_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
 
         $content = apply_filters('the_content', $content);
 
         add_filter('the_content', array($this, 'encode_content'), 999);
         add_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
-/**/
+        add_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
+/*
             $content = wptexturize($content);
             $content = convert_smilies($content);
             $content = wpautop($content);
@@ -265,23 +304,10 @@ class blur_pmpro_content
             $content = wp_make_content_images_responsive($content);
             $content = do_shortcode($content);
             $content = capital_P_dangit($content);
-/**/
-        // $this->reset_filters();
+*/
+        $this->reset_filters();
 
         return $content;
-    }
-
-    /**
-     * Reset all of the filter(s) we removed on init.
-     */
-    private function reset_filters() {
-
-        global $wp_filter;
-
-        $wp_filter['the_content'] = $this->the_content;
-        $wp_filter['get_the_excerpt'] = $this->get_the_excerpt;
-        $wp_filter['wp_trim_excerpt'] = $this->wp_trim_excerpt;
-        $wp_filter['excerpt_length'] = $this->excerpt_length;
     }
 
     /**
@@ -471,8 +497,8 @@ class blur_pmpro_content
             <div class="e20r-blur-header"><h2 class="e20r-blur-cta-h1"><?php echo apply_filters('e20rbpc-cta-headline-2', __("Unlock this content", "e20rbpc")); ?></h2><span class="e20r-blur-cta-login"><?php echo apply_filters('e20rbpc-cta-login',
                         sprintf(
                             "<a href=\"%s\" title=\"%s\">%s</a>",
-                            wp_login_url(),
-                            __("Login", "e20rbpc"),
+                            wp_login_url(get_permalink()),
+                            __("Or you can log in to view this content", "e20rbpc"),
                             __("Login", "e20rbpc")
                         )); ?></span></div>
             <h3 class="e20r-blur-cta-h3"><?php echo apply_filters('e20rbpc-cta-headline-3', __("Click the checkout button and get access today", "e20rbpc")); ?></h3>
