@@ -570,7 +570,7 @@ class blur_pmpro_content
      */
     public function enqueue()
     {
-
+        // Load plugin style sheet
         if (file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/css/e20r-blur-pmpro-content.min.css')) {
             wp_enqueue_style(
                 'e20r-blur-pmpro-content',
@@ -590,11 +590,11 @@ class blur_pmpro_content
 
         // Load Debug or non-debug version(s) of the JS file(s).
         if (false === WP_DEBUG &&
-            file_exists(E20R_BLUR_PMPRO_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js')
+            file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js')
         ) {
-
+            e20rbpc_write_log("Loading scrollToFixed jQuery plugin for production");
             wp_enqueue_script(
-                'jquery.scrolltofixed',
+                'jquery-scrolltofixed',
                 E20R_BLUR_PMPRO_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js',
                 array('jquery'),
                 '1.0.6',
@@ -602,11 +602,11 @@ class blur_pmpro_content
             );
 
         } else if (true === WP_DEBUG &&
-            file_exists(E20R_BLUR_PMPRO_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed.js')
+            file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/lib/scrollToFixed/jquery-scrolltofixed.js')
         ) {
-
+            e20rbpc_write_log("Loading scrollToFixed jQuery plugin for test/debug");
             wp_enqueue_script(
-                'jquery.scrolltofixed',
+                'jquery-scrolltofixed',
                 E20R_BLUR_PMPRO_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed.js',
                 array('jquery'),
                 '1.0.6',
@@ -618,20 +618,22 @@ class blur_pmpro_content
         if (false === WP_DEBUG &&
             file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/e20r-blur-pmpro-content.min.js')
         ) {
+            e20rbpc_write_log("Loading Blur PMPro Content Javascript for production");
             wp_enqueue_script(
                 'e20r-blur-pmpro-content',
                 E20R_BLUR_PMPRO_PLUGIN_URL . '/js/e20r-blur-pmpro-content.min.js',
-                array('jquery', 'jquery.scrolltofixed'),
+                array('jquery', 'jquery-scrolltofixed'),
                 E20R_BLUR_PMPRO_VER,
                 true
             );
         } else if (true === WP_DEBUG &&
             file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/e20r-blur-pmpro-content.js')
         ) {
+            e20rbpc_write_log("Loading Blur PMPro Content Javascript for test/debug");
             wp_enqueue_script(
                 'e20r-blur-pmpro-content',
                 E20R_BLUR_PMPRO_PLUGIN_URL . '/js/e20r-blur-pmpro-content.js',
-                array('jquery', 'jquery.scrolltofixed'),
+                array('jquery', 'jquery-scrolltofixed'),
                 E20R_BLUR_PMPRO_VER,
                 true
             );
