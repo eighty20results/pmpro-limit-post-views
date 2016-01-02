@@ -387,7 +387,7 @@ class blur_pmpro_content
     }
 
     /**
-     * Text encryptor
+     * Text encryption
      *
      * @param $text - The text (line/paragraph/word) to encrypt
      * @return mixed|string|void - The encrypted text.
@@ -468,18 +468,13 @@ class blur_pmpro_content
         ob_start();
         ?>
         <div class="e20r-blur-call-to-action">
-            <div class="e20r-blur-header">
-                <h2 class="e20r-blur-cta-h1"><?php echo apply_filters('e20rbpc-cta-headline-2', __("Unlock this content", "e20rbpc")); ?></h2>
-                <span class="e20r-blur-cta-login">
-                    <?php echo apply_filters('e20rbpc-cta-login',
+            <div class="e20r-blur-header"><h2 class="e20r-blur-cta-h1"><?php echo apply_filters('e20rbpc-cta-headline-2', __("Unlock this content", "e20rbpc")); ?></h2><span class="e20r-blur-cta-login"><?php echo apply_filters('e20rbpc-cta-login',
                         sprintf(
                             "<a href=\"%s\" title=\"%s\">%s</a>",
                             wp_login_url(),
                             __("Login", "e20rbpc"),
                             __("Login", "e20rbpc")
-                        )); ?>
-                </span>
-            </div>
+                        )); ?></span></div>
             <h3 class="e20r-blur-cta-h3"><?php echo apply_filters('e20rbpc-cta-headline-3', __("Click the checkout button and get access today", "e20rbpc")); ?></h3>
             <?php echo $this->fix_autop(wpautop(do_shortcode($lvlpage->post_content))); ?>
         </div>
