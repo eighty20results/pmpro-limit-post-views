@@ -114,3 +114,13 @@ span.e20r-blur-cta-login > a {
     font-weight: 700;
     vertical-align: text-bottom;
 }
+.clear-after {
+    clear: both;
+}
+.clear-after:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
