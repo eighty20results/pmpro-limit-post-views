@@ -32,10 +32,15 @@ class blur_pmpro_content
 
     /**
      * Load all required filters (and remove any we'd rather not run right now).
+     *
+     * @since 0.4
      */
-    public function init() {
-
+    public function init()
+    {
         $this->clear_filters();
+
+        // Add a default access check filter
+        add_filter('e20rbpc_has_content_access_filter', array($this, 'check_pmpro_access'), 10, 1);
 
         // Use our own excerpt & content filters
         add_filter('excerpt_length', array($this, 'set_excerpt_length'), 999);
@@ -45,8 +50,14 @@ class blur_pmpro_content
         add_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
     }
 
-    private function clear_filters() {
+    /**
+     * Preserve existing content & excerpt filters. Then run excerpt & content filters removal hooks
+     * @since 0.8
+     */
+    private function clear_filters()
+    {
 
+        // preserve existing filter(s).
         global $wp_filter;
 
         $this->filters['the_content'] = isset($wp_filter['the_content']) ? $wp_filter['the_content'] : null;
@@ -55,43 +66,95 @@ class blur_pmpro_content
         $this->filters['wp_trim_excerpt'] = isset($wp_filter['wp_trim_excerpt']) ? $wp_filter['wp_trim_excerpt'] : null;
         $this->filters['excerpt_length'] = isset($wp_filter['excerpt_length']) ? $wp_filter['excerpt_length'] : null;
 
-        remove_filter('the_excerpt', 'pmpro_membership_get_excerpt_filter', 15);
-        remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_start', 1);
-        remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_end', 100);
-        remove_filter('the_content', 'pmpro_membership_content_filter', 5);
-
-
-        /*
-        // Strip all excerpt & content filters
-        remove_all_filters('get_the_excerpt');
-        remove_all_filters('the_content');
-        remove_all_filters('wp_trim_excerpt');
-        remove_all_filters('excerpt_length');
-        */
+        // Run actions to clear content & excerpt filters
+        do_action('e20rbpc_remove_excerpt_filters', array($this, 'remove_pmpro_excerpt_filters'));
+        do_action('e20rbpc_remove_content_filters', array($this, 'remove_pmpro_content_filters'));
     }
 
     /**
-     * Reset all of the filter(s) we removed on init.
+     * Using action(s) to reset all of the filter(s) we removed on init.
+     *
+     * @since 0.8
      */
-    private function reset_filters() {
+    private function reset_filters()
+    {
+        do_action('e20rbpc_remove_excerpt_filters', array($this, 'remove_pmpro_excerpt_filters'));
+        do_action('e20rbpc_remove_content_filters', array($this, 'remove_pmpro_content_filters'));
+    }
 
-        /*
-        global $wp_filter;
+    /**
+     * Demo filter for Paid Memberships Pro content access check
+     *
+     * @param $has_access - Current value of the access check
+     * @return bool - Does current_user->ID have permission to access current post->ID
+     *
+     * @since 0.8
+     */
+    public function check_pmpro_access($has_access)
+    {
 
-        $wp_filter['the_content'] = $this->filters['the_content'];
-        $wp_filter['get_the_excerpt'] = $this->filters['get_the_excerpt'];
-        $wp_filter['the_excerpt'] = $this->filters['the_excerpt'];
-        $wp_filter['wp_trim_excerpt'] = $this->filters['wp_trim_excerpt'];
-        $wp_filter['excerpt_length'] = $this->filters['excerpt_length'];
-        */
+        if (function_exists('pmpro_has_membership_access')) {
+
+            $access = pmpro_has_membership_access(NULL, NULL, true);
+
+            $has_access = ((is_array($access) && true == $access[0]) || (!is_array($access) && true == $access)) ? true : false;
+        }
+
+        return $has_access;
+    }
+
+    /**
+     * Demo action hook to remove Paid Memberships Pro excerpt filters
+     *
+     * @since 0.8
+     */
+    public function remove_pmpro_excerpt_filters()
+    {
+
+        if (function_exists('pmpro_has_membership_access')) {
+
+            remove_filter('the_excerpt', 'pmpro_membership_get_excerpt_filter', 15);
+            remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_start', 1);
+            remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_end', 100);
+        }
+    }
+
+    /**
+     * Demo action hook to remove Paid Memberships Pro content filters
+     *
+     * @since 0.8
+     */
+    public function remove_pmpro_content_filters()
+    {
+        if (function_exists('pmpro_has_membership_access')) {
+
+            remove_filter('the_content', 'pmpro_membership_content_filter', 5);
+        }
+    }
+
+    /**
+     * Demo action hook adds Paid Memberships Pro excerpt filters
+     *
+     * @since 0.8
+     */
+    public function add_pmpro_excerpt_filters() {
+
         add_filter('the_excerpt', 'pmpro_membership_get_excerpt_filter', 15);
         add_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_start', 1);
         add_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_end', 100);
+    }
+
+    /**
+     * Demo action hook to add Paid Memberships Pro content filters
+     *
+     * @since 0.8
+     */
+    public function add_pmpro_content_filters() {
         add_filter('the_content', 'pmpro_membership_content_filter', 5);
     }
 
     /**
-     * Function to access this class using the singleton pattern
+     * A access this class using the singleton pattern
      *
      * @return bpp - Blur Protected Posts object
      *
@@ -120,6 +183,8 @@ class blur_pmpro_content
     }
 
     /**
+     * Remove any trace of the ellipsis for 'more' in excerpts.
+     *
      * @param $more - The current text used to indicate more content
      * @return string - Empty string.
      * @since 0.1
@@ -129,13 +194,21 @@ class blur_pmpro_content
         return '';
     }
 
-    public function encode_excerpt($content) {
-
+    /**
+     * Special function for handling excerpts
+     *
+     * @param $content - The content
+     * @return mixed - Processed excerpt - blurred post->post_content, or combination of $post->post_excerpt & blurred $post->post_content)
+     *
+     * @since 0.7
+     */
+    public function encode_excerpt($content)
+    {
         e20rbpc_write_log("Processing as an excerpt");
         return $this->encode_content($content);
     }
+
     /**
-     *
      * Encode (hide) text while preserving sentence/paragraph look. Will also preserve key HTML tags for SEO purposes.
      *
      * @param $content - The content for the page.
@@ -151,14 +224,6 @@ class blur_pmpro_content
 
         $this->clear_filters();
 
-        if (!function_exists('pmpro_has_membership_access')) {
-
-            e20rbpc_write_log("No PMPRO present?");
-            $pmpro_loaded = false;
-
-            // return $content;
-        }
-
         global $post, $current_user;
 
         $this->options = get_option('e20rbpc_settings',
@@ -168,13 +233,9 @@ class blur_pmpro_content
             )
         );
 
-        $hasaccess = ( $pmpro_loaded ? pmpro_has_membership_access(NULL, NULL, true) : true );
+        $has_access = apply_filters("e20rbpc_has_content_access_filter", false);
 
-        if (is_array($hasaccess)) {
-            $hasaccess = $hasaccess[0];
-        }
-
-        if ( false == $hasaccess) {
+        if (false === $has_access) {
 
             // Inspired by http://stackoverflow.com/questions/24805636/wordpress-excerpt-by-second-paragraph
             // With gratitude to Clément Malet and Pieter Goosen
@@ -193,11 +254,6 @@ class blur_pmpro_content
             }
 
             unset($ct_array);
-
-            // $pattern = "/(\\<a.*\\<\\/a\\>)|(\\<img.*\\>)|(\\<h[1-6]\\>.*\\<\\/h[1-6]\\>)|(\\<blockquote.*\\/blockquote\\>)|(\\<em.*\\/em\\>)|\\<strong.*\\/strong\\>/i";
-            // $has_html = preg_match($pattern, $content);
-
-            // if ( (0 != $has_html) && !empty($content) ) {
 
             $bt = $rt;
             $rt_to_add = array();
@@ -241,20 +297,12 @@ class blur_pmpro_content
 
                 if (isset($bt[$i]) && !empty($bt[$i])) {
 
-//                        if( preg_match("/^\s*\[.*\]\s*$/", $bt[$i], $match) == 0 ) {
+                    $bt[$i] = $this->process_text($bt[$i]);
 
-                        $bt[$i] = $this->process_text($bt[$i]);
-
-                        if ($bt[$i] == '') {
-                            continue;
-                        }
-                        // $bt[$i] = '<p>' . $bt[$i];
-
-/*                        } else {
-                        e20rbpc_write_log("Processing shortcode: {$bt[$i]}");
-                        $bt[$i] = do_shortcode($bt[$i]);
+                    if ($bt[$i] == '') {
+                        continue;
                     }
-*/
+
                     $bt_to_add[$i] = $bt[$i];
                 }
             }
@@ -267,21 +315,29 @@ class blur_pmpro_content
             // Build the structure of the visible and blurred content.
             $regular_text = '<div class="e20r-blur-content-wrapper clear-after"><div class="e20r-visible-content">' . PHP_EOL . $regular_text . PHP_EOL . '</div>' . PHP_EOL;
             $regular_text .= '<div class="e20r-blurred-content-overlay">' . $this->load_overlay() . '</div>' . PHP_EOL;
-            $regular_text .= '<!--googleoff: index-->'. PHP_EOL . '<div class="e20r-blurred-content">' . PHP_EOL;
+            $regular_text .= '<!--googleoff: index-->' . PHP_EOL . '<div class="e20r-blurred-content">' . PHP_EOL;
 
             $blurred_text .= PHP_EOL . '</div>' . PHP_EOL . '</div><!--googleon: index-->';
 
             $content = $regular_text . $blurred_text . PHP_EOL;
-            // }
         }
-/**/
+
         $this->reapply_filters($content);
         $this->reset_filters();
 
         return $content;
     }
 
-    private function reapply_filters( $content ) {
+    /**
+     * Apply the_content filter without entering perma-loop
+     *
+     * @param $content - content supplied
+     * @return mixed|void - Filtered content
+     *
+     * @since 0.7.2
+     */
+    private function reapply_filters($content)
+    {
 
         remove_filter('the_content', array($this, 'encode_content'), 999);
         remove_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
@@ -301,7 +357,7 @@ class blur_pmpro_content
      *
      * @param $paragraph - Text from paragraph (w/o extra CR)
      * @return mixed|string - Returns SEO friendly, encoded text/paragraph.
-
+     *
      * @since 0.3
      */
     private function process_text($paragraph)
@@ -343,7 +399,7 @@ class blur_pmpro_content
         $paragraph = $doc->saveHTML();
         $paragraph = str_replace('&Acirc;&nbsp;', ' ', $paragraph);
 
-        preg_match_all("/\<e20r\>(.*)\<\/e20r\>/", $paragraph, $to_replace, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER) ;
+        preg_match_all("/\<e20r\>(.*)\<\/e20r\>/", $paragraph, $to_replace, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER);
         $wds = preg_split('/\s+/', strip_tags($paragraph), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
 
         $new_paragraph = '';
@@ -362,7 +418,7 @@ class blur_pmpro_content
 
         $paragraph = '<p>' . $new_paragraph . '</p>';
 
-        if ( !empty($to_replace[0])) {
+        if (!empty($to_replace[0])) {
 
             // Have something to do...
             $key = $to_replace[1][0][0];
@@ -393,9 +449,17 @@ class blur_pmpro_content
         return $text;
     }
 
+    /**
+     * Imprecise function for detecting whether the $string contains html/xml tags (or anything wrapped in < & >)
+     *
+     * @param $string - String to test for HTML content
+     * @return bool - True if content contains tags
+     *
+     * @since 0.7.0
+     */
     private function is_html($string)
     {
-        return preg_match("/<[^<]+>/",$string,$m) != 0;
+        return preg_match("/<[^<]+>/", $string, $m) != 0;
     }
 
     /**
@@ -421,7 +485,7 @@ class blur_pmpro_content
 
             $char = substr($word, $i, 1);
 
-            if ( in_array( $char, $skip, true ) ) {
+            if (in_array($char, $skip, true)) {
                 $word .= $char;
             } else {
                 $rand = rand(0, strlen($possible) - 1);
@@ -459,6 +523,7 @@ class blur_pmpro_content
      * Load the specified CTA page (from settings in /wp-admin)
      *
      * @return string - Overlay HTML to return
+     *
      * @since 0.3
      */
     private function load_overlay()
@@ -548,14 +613,16 @@ class blur_pmpro_content
      * Displays the 2nd function in the current stack trace (i.e. the one that called the one that called "me"
      *
      * @access private
+     *
      * @since v0.7.1
      */
-    private function who_called_me() {
+    private function who_called_me()
+    {
 
-        $trace=debug_backtrace();
-        $caller=$trace[2];
+        $trace = debug_backtrace();
+        $caller = $trace[2];
 
-        $trace =  "Called by {$caller['function']}()";
+        $trace = "Called by {$caller['function']}()";
         if (isset($caller['class']))
             $trace .= " in {$caller['class']}()";
 
@@ -567,6 +634,8 @@ class blur_pmpro_content
 
     /**
      * Load CSS & JS libraries
+     *
+     * @since 0.4
      */
     public function enqueue()
     {
