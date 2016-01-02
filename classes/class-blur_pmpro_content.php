@@ -27,7 +27,7 @@ class blur_pmpro_content
 
         add_filter('get_e20rbpc_class_instance', array($this, 'get_instance'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue'));
-        add_action('plugins_loaded', array($this, 'init'));
+        add_action('wp_loaded', array($this, 'init'));
     }
 
     /**
