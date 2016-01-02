@@ -1,2 +1,2 @@
-Fix: Debug logging caused fatal error
-Fix: Didn't include all required files in build
+Fix: Didn't display unprotected content properly.
+Update CSS for CTA headline

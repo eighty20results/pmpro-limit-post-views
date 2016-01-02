@@ -31,6 +31,10 @@ Please post it in the GitHub issue tracker here: https://github.com/eighty20resu
 Please visit our support site at http://www.eighty20results.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.7.2 =
+* Fix: Didn't display unprotected content properly.
+* Update CSS for CTA headline
+
 = 0.7.1 =
 * Fix: Debug logging caused fatal error
 * Fix: Didn't include all required files in build
