@@ -3,7 +3,7 @@ Contributors: eighty20results
 Tags: paid memberships pro, pmpro, dagbladet, post encryption, hide content, seo friendly
 Requires at least: 3.7
 Tested up to: 4.4
-Stable tag: 0.7.3
+Stable tag: 0.8
 
 Integrates with Paid Memberships Pro to hide  content (encrypt & blur) with a pretty overlay & call to action when content is protected by a PMPro membership level.
 
@@ -31,6 +31,12 @@ Please post it in the GitHub issue tracker here: https://github.com/eighty20resu
 Please visit our support site at http://www.eighty20results.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.8 =
+* Fix: Various documentation improvements & clean up of 'dead' code
+* Enh: Use filters & actions to add/remove content & excerpt filters for 3rd party content protection plugins
+* Enh: Default filters & actions installed for Paid Memberships Pro
+* Enh: Use filter to check for access rights to content in the_content filter
+
 = 0.7.3 =
 * Fix: Didn't display unprotected content properly.
 * Fix: Update CSS for CTA headline
