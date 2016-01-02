@@ -10,10 +10,7 @@ class blur_pmpro_content
     private $options = array();
     private $elements = array();
     private $a_idx = 0;
-    private $the_content;
-    private $get_the_excerpt;
-    private $wp_trim_excerpt;
-    private $excerpt_length;
+    private $filters = array();
 
     /**
      * bpp constructor.
@@ -43,19 +40,20 @@ class blur_pmpro_content
         // Use our own excerpt & content filters
         add_filter('excerpt_length', array($this, 'set_excerpt_length'), 999);
         add_filter('wp_trim_excerpt', array($this, 'remove_more_text'), 999);
-        add_filter('the_content', array($this, 'encode_content'), 5);
-        add_filter('get_the_excerpt', array($this, 'encode_excerpt'), 5);
-        add_filter('the_excerpt', array($this, 'encode_excerpt'), 5);
+        add_filter('the_content', array($this, 'encode_content'), 999);
+        add_filter('get_the_excerpt', array($this, 'encode_excerpt'), 999);
+        add_filter('the_excerpt', array($this, 'encode_excerpt'), 999);
     }
 
     private function clear_filters() {
 
         global $wp_filter;
 
-        $this->the_content = $wp_filter['the_content'];
-        $this->get_the_excerpt = $wp_filter['get_the_excerpt'];
-        $this->wp_trim_excerpt = $wp_filter['wp_trim_excerpt'];
-        $this->excerpt_length = $wp_filter['excerpt_length'];
+        $this->filters['the_content'] = isset($wp_filter['the_content']) ? $wp_filter['the_content'] : null;
+        $this->filters['get_the_excerpt'] = isset($wp_filter['get_the_excerpt']) ? $wp_filter['get_the_excerpt'] : null;
+        $this->filters['the_excerpt'] = isset($wp_filter['the_excerpt']) ? $wp_filter['the_excerpt'] : null;
+        $this->filters['wp_trim_excerpt'] = isset($wp_filter['wp_trim_excerpt']) ? $wp_filter['wp_trim_excerpt'] : null;
+        $this->filters['excerpt_length'] = isset($wp_filter['excerpt_length']) ? $wp_filter['excerpt_length'] : null;
 
         remove_filter('the_excerpt', 'pmpro_membership_get_excerpt_filter', 15);
         remove_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_start', 1);
@@ -80,10 +78,11 @@ class blur_pmpro_content
         /*
         global $wp_filter;
 
-        $wp_filter['the_content'] = $this->the_content;
-        $wp_filter['get_the_excerpt'] = $this->get_the_excerpt;
-        $wp_filter['wp_trim_excerpt'] = $this->wp_trim_excerpt;
-        $wp_filter['excerpt_length'] = $this->excerpt_length;
+        $wp_filter['the_content'] = $this->filters['the_content'];
+        $wp_filter['get_the_excerpt'] = $this->filters['get_the_excerpt'];
+        $wp_filter['the_excerpt'] = $this->filters['the_excerpt'];
+        $wp_filter['wp_trim_excerpt'] = $this->filters['wp_trim_excerpt'];
+        $wp_filter['excerpt_length'] = $this->filters['excerpt_length'];
         */
         add_filter('the_excerpt', 'pmpro_membership_get_excerpt_filter', 15);
         add_filter('get_the_excerpt', 'pmpro_membership_get_excerpt_filter_start', 1);
