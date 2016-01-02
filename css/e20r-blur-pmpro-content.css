@@ -19,7 +19,7 @@ div.e20r-blur-header p {
     padding: 0;
 }
 div.e20r-blur-call-to-action {
-    /* position: absolute; */
+    position: absolute;
     top: 50px;
     width: 100%;
     opacity: 1.0;
