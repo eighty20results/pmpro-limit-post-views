@@ -1,8 +1,11 @@
 #!/bin/bash
 #
+# Created by Eighty / 20 Results, owned by Wicked Strong Chicks, LLC.
+# Developer: Thomas Sjolshagen <thomas@eigthy20results.com>
+#
 include=(adminpages classes css includes js languages e20r-blur-pmpro-content.php readme.txt)
 exclude=(vendor *.yml *.phar composer.*)
-short_name="e20r-blur-pmpro-content"
+short_name="e20r-blur-protected-content"
 plugin_path="${short_name}"
 readme_path="../build_readmes/"
 changelog_source=${readme_path}current.txt
