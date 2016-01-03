@@ -1,10 +1,11 @@
 <?php
-use E20R\BLUR_PMPRO_CONTENT as BPPC;
+use E20R\BLUR_PROTECTED_CONTENT as BPPC;
+
 /*
-Plugin Name: Eighty/20 Results - Blur PMPro Content (Add-on)
-Plugin URI: https://www.eighty20results.com/plugins/e20r-blur-pmpro-content/
+Plugin Name: Eighty/20 Results - Blur Protected Content (Add-on)
+Plugin URI: https://www.eighty20results.com/plugins/e20r-blur-protected-content/
 Description: Integrates with Paid Memberships Pro to deliver a more SEO friendly way to hide/obfuscate post PMPro content.
-Version: 0.8
+Version: 0.8.1
 Author: Thomas Sjolshagen (Eighty/20 Results)
 Author URI: http://www.eighty20results.com/thomas-sjolshagen
 */
@@ -15,16 +16,17 @@ Author URI: http://www.eighty20results.com/thomas-sjolshagen
     - Use an overlay to "blur" the unreadable content
 	- Add a call-to-action overlay on top of the unreadable.
     - CTA is starting point for sign up/sign in to the preferred membership level.
-*/
 
+   License: MIT
+ */
 define(__NAMESPACE__ . '\NS', __NAMESPACE__ . '\\');
 
-define('E20R_BLUR_PMPRO_VER', '0.8');
-define('E20R_BLUR_PMPRO_PLUGIN_URL', plugins_url('', __FILE__));
-define('E20R_BLUR_PMPRO_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define( 'E20R\BLUR_PMPRO_CONTENT\NS\E20R_MAX_LOG_SIZE', 1024 * 2014 * 3); // In MB
+define('E20R_BPC_VER', '0.8');
+define('E20R_BPC_PLUGIN_URL', plugins_url('', __FILE__));
+define('E20R_BPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('E20R\BLUR_PROTECTED_CONTENT\NS\E20R_MAX_LOG_SIZE', 1024 * 2014 * 3); // In MB
 
-if ( !function_exists( "\\e20rbpc_autoloader")):
+if (!function_exists("\\e20rbpc_autoloader")):
 
     /**
      * Automatically loads the class on 'new'
@@ -32,19 +34,26 @@ if ( !function_exists( "\\e20rbpc_autoloader")):
      * @param $class_name - Name of the class (autoloader)
      * @since 0.1
      */
-    function e20rbpc_autoloader($class_name) {
+    function e20rbpc_autoloader($class_name)
+    {
 
-        if (false === stripos($class_name, 'pmpro_')) {
+        if (false === stripos($class_name, 'blur_')) {
             return;
         }
 
         $file_parts = explode('\\', $class_name);
 
         $base = plugin_dir_path(__FILE__) . 'classes';
-        $name = strtolower( $file_parts[count($file_parts)-1]);
+        $module = plugin_dir_path(__FILE__) . 'modules';
+
+        $name = strtolower($file_parts[count($file_parts) - 1]);
 
         if (file_exists("{$base}/class-{$name}.php")) {
             require_once("{$base}/class-{$name}.php");
+        }
+
+        if (file_exists("{$module}/{$name}.php")) {
+            require_once("{$module}/{$name}.php");
         }
     }
 endif;
@@ -90,7 +99,7 @@ if (!function_exists('e20rbpc_write_log')) {
             $tid = sprintf("%08x", abs(crc32($_SERVER['REMOTE_ADDR'] . $_SERVER['REQUEST_TIME'] . (isset($_SERVER['REMOTE_PORT']) ? $_SERVER['REMOTE_PORT'] : 80))));
 
             $dbgMsg = '(' . date('d-m-y H:i:s', current_time('timestamp')) . "-{$tid}) -- " .
-                ( is_array($msg) || is_object($msg) ? print_r($msg, true) : $msg) . "\n";
+                (is_array($msg) || is_object($msg) ? print_r($msg, true) : $msg) . "\n";
 
             e20rbpc_add_text($dbgMsg, $dbgFile);
         }
@@ -146,18 +155,19 @@ if (!function_exists('e20rbpc_add_text')) {
         fclose($handle);
     }
 }
+
 // Load the update checker for this plugin
-require_once(E20R_BLUR_PMPRO_PLUGIN_DIR . '/classes/plugin-update/plugin-update-checker.php');
+require_once(E20R_BPC_PLUGIN_DIR . '/classes/plugin-update/plugin-update-checker.php');
 $myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://eighty20results.com/protected-content/e20r-blur-pmpro-content/metadata.json',
+    'https://eighty20results.com/protected-content/e20r-blur-protected-content/metadata.json',
     __FILE__
 );
 
 // Load wp-admin "stuff"
-require_once(E20R_BLUR_PMPRO_PLUGIN_DIR . '/includes/admin.php');
+require_once(E20R_BPC_PLUGIN_DIR . '/includes/admin.php');
 
 // Configure the class autoloader
 spl_autoload_register("\\e20rbpc_autoloader");
 
 // load the Blur_Protected_Posts class and init the plugin.
-$bpp = new BPPC\blur_pmpro_content();
+$bpp = new BPPC\blur_protected_content();
