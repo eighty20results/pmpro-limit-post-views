@@ -1,11 +1,11 @@
-=== Eighty / 20 Results - Blur PMPro Content (Add-on) ===
+=== Eighty / 20 Results - Blur Protected Content (Add-on) ===
 Contributors: eighty20results
 Tags: paid memberships pro, pmpro, dagbladet, post encryption, hide content, seo friendly
 Requires at least: 3.7
 Tested up to: 4.4
 Stable tag: 0.8
 
-Integrates with Paid Memberships Pro to hide  content (encrypt & blur) with a pretty overlay & call to action when content is protected by a PMPro membership level.
+Integrates with a Membership/Content protection plugin to hide the content they'd like to protect (encrypt & blur) with a pretty overlay & call to action
 
 == Description ==
 
