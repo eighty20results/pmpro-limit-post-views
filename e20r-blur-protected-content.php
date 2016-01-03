@@ -2,9 +2,9 @@
 use E20R\BLUR_PROTECTED_CONTENT as BPPC;
 
 /*
-Plugin Name: Eighty/20 Results - Blur Protected Content (Add-on)
+Plugin Name: Eighty/20 Results - Blur Protected Content
 Plugin URI: https://www.eighty20results.com/plugins/e20r-blur-protected-content/
-Description: Integrates with Paid Memberships Pro to deliver a more SEO friendly way to hide/obfuscate post PMPro content.
+Description: Integrates with a content protection plugin to deliver a more SEO friendly way to protect the content.
 Version: 0.8.1
 Author: Thomas Sjolshagen (Eighty/20 Results)
 Author URI: http://www.eighty20results.com/thomas-sjolshagen
@@ -21,7 +21,7 @@ Author URI: http://www.eighty20results.com/thomas-sjolshagen
  */
 define(__NAMESPACE__ . '\NS', __NAMESPACE__ . '\\');
 
-define('E20R_BPC_VER', '0.8');
+define('E20R_BPC_VER', '0.8.1');
 define('E20R_BPC_PLUGIN_URL', plugins_url('', __FILE__));
 define('E20R_BPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('E20R\BLUR_PROTECTED_CONTENT\NS\E20R_MAX_LOG_SIZE', 1024 * 2014 * 3); // In MB
@@ -158,6 +158,8 @@ if (!function_exists('e20rbpc_add_text')) {
 
 // Load the update checker for this plugin
 require_once(E20R_BPC_PLUGIN_DIR . '/classes/plugin-update/plugin-update-checker.php');
+include_once(E20R_BPC_PLUGIN_DIR . 'classes/class-bpc_module.php');
+
 $myUpdateChecker = PucFactory::buildUpdateChecker(
     'https://eighty20results.com/protected-content/e20r-blur-protected-content/metadata.json',
     __FILE__
