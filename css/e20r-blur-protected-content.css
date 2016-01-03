@@ -78,20 +78,7 @@ h3.e20r-blur-cta-h3 {
     color: #5c5c5c;
     margin: 10px;
 }
-div.e20r-blur-call-to-action div.pmpro_level {
-    width: 45%;
-    margin: 10px;
-}
-div.e20r-blur-call-to-action .entry-meta {
-    margin: 5px 0 0;
-}
-div.e20r-blur-call-to-action .entry-meta .pmpro_btn {
-    width: 100%;
-    margin: 10px 0;
-}
-div.e20r-blur-call-to-action .entry {
-    margin: 0;
-}
+
 div.e20r-blur-header {
     background-color: orange;
     border-bottom: 3px solid #ddd;
