@@ -1,4 +1,4 @@
-=== Eighty / 20 Results - Blur Protected Content (Add-on) ===
+=== Eighty / 20 Results - Blur Protected Content ===
 Contributors: eighty20results
 Tags: paid memberships pro, pmpro, dagbladet, post encryption, hide content, seo friendly
 Requires at least: 3.7
