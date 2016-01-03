@@ -9,12 +9,12 @@ use E20R\BLUR_PROTECTED_CONTENT as BPC;
 
 class blur_protected_content
 {
-
     private static $_this;
     private $options = array();
     private $elements = array();
     private $a_idx = 0;
     private $filters = array();
+    private $modules = array();
 
     /**
      * bpp constructor.
@@ -35,45 +35,38 @@ class blur_protected_content
         add_filter('get_e20rbpc_class_instance', array($this, 'get_instance'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue'));
         add_action('wp_loaded', array($this, 'init'));
-        add_action('admin_notices', array($this, 'admin_notice'));
+//        add_action('admin_notices', array($this, 'admin_notice'));
     }
 
+    /**
+     * Load any 3rd party module(s)
+     * @since 0.8.1
+     */
     public function load_modules()
     {
         $modules = get_option('e20rbpc_modules', array());
 
         foreach( $modules as $class => $path ) {
 
-            $success = include_once $path;
+            e20rbpc_write_log("Attempting to load: {$class} at: {$path}");
 
-            if (!$success) {
+            if (!empty($path) && !empty($class)) {
 
-                e20rbpc_write_log("Error: Unable to load {$class} from {$path}");
-                continue;
-            }
+                $success = include_once $path;
 
-            $this->modules[] = new ${$class}();
-        }
+                if (!$success) {
 
-        $modules = glob(E20R_BPC_PLUGIN_DIR . "modules/*.php");
+                    e20rbpc_write_log("Error: Unable to load {$class} from {$path}");
+                    continue;
+                }
 
-        e20rbpc_write_log("Looking for " . count($modules) . " module(s) to load");
+                $tmp = preg_split("/\//", $class);
+                $class_name = $tmp[(count($tmp)-1)];
 
-        for ($i = 0; $i < count($modules); $i++) {
-
-            $module = basename($modules[$i]);
-            $module = sanitize_file_name($module);
-
-            e20rbpc_write_log("Loading: {$module}");
-
-            $path = E20R_BPC_PLUGIN_DIR . 'modules/' . $module;
-            $success = include_once($path);
-
-            if (!$success) {
-                e20rbpc_write_log("Error loading: {$path}");
-                add_notice('admin_notices', array($this, 'module_error'));
+                $this->modules[] = apply_filters("get_{$class_name}_class_instance", null);
             }
         }
+
     }
 
     /**
@@ -545,43 +538,42 @@ class blur_protected_content
     public function enqueue()
     {
         // Load plugin style sheet
-        if (file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/css/e20r-blur-protected-content.min.css')) {
+        if (file_exists(E20R_BPC_PLUGIN_DIR . '/css/e20r-blur-protected-content.min.css')) {
             wp_enqueue_style(
                 'e20r-blur-protected-content',
-                E20R_BLUR_PMPRO_PLUGIN_URL . '/css/e20r-blur-protected-content.min.css',
+                E20R_BPC_PLUGIN_URL . '/css/e20r-blur-protected-content.min.css',
                 null,
-                E20R_BLUR_PMPRO_VER
+                E20R_BPC_VER
             );
         } else {
             wp_enqueue_style(
                 'e20r-blur-protected-content',
-                E20R_BLUR_PMPRO_PLUGIN_URL .
-                '/css/e20r-blur-protected-content.css',
+                E20R_BPC_PLUGIN_URL . '/css/e20r-blur-protected-content.css',
                 null,
-                E20R_BLUR_PMPRO_VER
+                E20R_BPC_VER
             );
         }
 
         // Load Debug or non-debug version(s) of the JS file(s).
         if (false === WP_DEBUG &&
-            file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js')
+            file_exists(E20R_BPC_PLUGIN_DIR . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js')
         ) {
             e20rbpc_write_log("Loading scrollToFixed jQuery plugin for production");
             wp_enqueue_script(
                 'jquery-scrolltofixed',
-                E20R_BLUR_PMPRO_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js',
+                E20R_BPC_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js',
                 array('jquery'),
                 '1.0.6',
                 true
             );
 
         } else if (true === WP_DEBUG &&
-            file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/lib/scrollToFixed/jquery-scrolltofixed.js')
+            file_exists(E20R_BPC_PLUGIN_DIR . '/js/lib/scrollToFixed/jquery-scrolltofixed.js')
         ) {
             e20rbpc_write_log("Loading scrollToFixed jQuery plugin for test/debug");
             wp_enqueue_script(
                 'jquery-scrolltofixed',
-                E20R_BLUR_PMPRO_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed.js',
+                E20R_BPC_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed.js',
                 array('jquery'),
                 '1.0.6',
                 true
@@ -590,25 +582,25 @@ class blur_protected_content
 
         // Load Debug or non-debug version(s) of the JS file(s).
         if (false === WP_DEBUG &&
-            file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/e20r-blur-protected-content.min.js')
+            file_exists(E20R_BPC_PLUGIN_DIR . '/js/e20r-blur-protected-content.min.js')
         ) {
             e20rbpc_write_log("Loading Blur PMPro Content Javascript for production");
             wp_enqueue_script(
                 'e20r-blur-protected-content',
-                E20R_BLUR_PMPRO_PLUGIN_URL . '/js/e20r-blur-protected-content.min.js',
+                E20R_BPC_PLUGIN_URL . '/js/e20r-blur-protected-content.min.js',
                 array('jquery', 'jquery-scrolltofixed'),
-                E20R_BLUR_PMPRO_VER,
+                E20R_BPC_VER,
                 true
             );
         } else if (true === WP_DEBUG &&
-            file_exists(E20R_BLUR_PMPRO_PLUGIN_DIR . '/js/e20r-blur-protected-content.js')
+            file_exists(E20R_BPC_PLUGIN_DIR . '/js/e20r-blur-protected-content.js')
         ) {
             e20rbpc_write_log("Loading Blur PMPro Content Javascript for test/debug");
             wp_enqueue_script(
                 'e20r-blur-protected-content',
-                E20R_BLUR_PMPRO_PLUGIN_URL . '/js/e20r-blur-protected-content.js',
+                E20R_BPC_PLUGIN_URL . '/js/e20r-blur-protected-content.js',
                 array('jquery', 'jquery-scrolltofixed'),
-                E20R_BLUR_PMPRO_VER,
+                E20R_BPC_VER,
                 true
             );
         }
@@ -618,7 +610,7 @@ class blur_protected_content
                 'e20r-blur-protected-content-user',
                 get_template_directory_uri() . '/e20r-style/e20r-blur-protected-content.css',
                 array('e20r-blur-protected-content'),
-                E20R_BLUR_PMPRO_VER
+                E20R_BPC_VER
             );
         }
 
@@ -628,7 +620,7 @@ class blur_protected_content
                 'e20r-blur-protected-content-user',
                 get_stylesheet_directory_uri() . '/e20r-style/e20r-blur-protected-content.css',
                 array('e20r-blur-protected-content'),
-                E20R_BLUR_PMPRO_VER
+                E20R_BPC_VER
             );
         }
     }
