@@ -8,12 +8,11 @@
  */
 
 // Check permissions first
-if ( ! current_user_can( apply_filters( 'pmpro_edit_member_capability', 'manage_options' ) ) ) {
+if ( ! current_user_can( apply_filters( 'e20r_bpc_admin_privs', 'manage_options' ) ) ) {
 	wp_die( 'You do not have sufficient permissions to access this page.' );
 }
 
-
-require_once( PMPRO_DIR . '/adminpages/admin_header.php' );
+require_once( plugin_dir_path(__FILE__) . '/admin_header.php' );
 
 
 /**
