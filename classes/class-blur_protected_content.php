@@ -32,8 +32,12 @@ class blur_protected_content
 
         $this->load_modules();
 
+        // Don't print warnings about bad/incomplete HTML
+        libxml_use_internal_errors(true);
+
         add_filter('get_e20rbpc_class_instance', array($this, 'get_instance'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin'));
         add_action('wp_loaded', array($this, 'init'));
 //        add_action('admin_notices', array($this, 'admin_notice'));
     }
@@ -518,6 +522,8 @@ class blur_protected_content
         global $post;
         global $current_user;
 
+        $reqd_levels = array();
+
         $level_info = \pmpro_has_membership_access($post->ID, $current_user->ID, true);
         $reqd = $level_info[1];
 
@@ -528,6 +534,20 @@ class blur_protected_content
 
         return $reqd_levels;
 
+    }
+
+    /**
+     * Load admin page styles
+     */
+    public function enqueue_admin() {
+
+            e20rbpc_write_log("Loading styles for admin pages");
+            wp_enqueue_style(
+                'e20r-bpc-admin',
+                E20R_BPC_PLUGIN_URL . '/css/admin.css',
+                null,
+                E20R_BPC_VER
+            );
     }
 
     /**
