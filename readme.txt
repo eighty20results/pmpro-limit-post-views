@@ -31,6 +31,21 @@ Please post it in the GitHub issue tracker here: https://github.com/eighty20resu
 Please visit our support site at http://www.eighty20results.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.8.1 =
+* Fix: Move PMPro specific CSS to PMPro Add-on
+* Fix: Renamed to match plugin name
+* Fix: Renamed constants & class names to match new BPC name
+* Enh/Fix: Updated namespace
+* Enh/Fix: Updated defined variable names
+* Enh: Initial infrastructure for installing content management integration modules
+* Enh: Load base class for add-on module(s).
+* Enh: Refactored file
+* Enh: Parent class for all BPC modules. Handles activation, deactivation & init of actions unless overridden.
+* Enh: Infrastructure to support standalone plugins/modules/add-ons for 3rd party content protection systems
+* Enh: 3rd party modules in own namespace (E20R\BLUR_PROTECTED_CONTENT\MODULES)
+* Enh: Update module infrastructure for 3rd party modules.
+* Enh: Initial commit of Module base class
+
 = 0.8 =
 * Fix: Various documentation improvements & clean up of 'dead' code
 * Enh: Use filters & actions to add/remove content & excerpt filters for 3rd party content protection plugins
