@@ -62,7 +62,7 @@ function e20rbpc_settings_ctapage($args) {
 
 // Display settings page.
 ?>
-	<h2><?php _e( 'Blur PMPro Content', 'e20rbpc' ); ?></h2>
+	<h2><?php _e( 'Blur Protected Content', 'e20rbpc' ); ?></h2>
 	<form action="options.php" method="POST">
 		<?php settings_fields( 'e20rbpc_settings' ); ?>
 		<?php do_settings_sections( 'e20rbpc' ); ?>
@@ -70,4 +70,4 @@ function e20rbpc_settings_ctapage($args) {
 	</form>
 <?php
 
-require_once(PMPRO_DIR . '/adminpages/admin_footer.php');
+require_once(E20R_BPC_PLUGIN_DIR . '/adminpages/admin_footer.php');
