@@ -1,13 +1,8 @@
-Fix: Move PMPro specific CSS to PMPro Add-on
-Fix: Renamed to match plugin name
-Fix: Renamed constants & class names to match new BPC name
-Enh/Fix: Updated namespace
-Enh/Fix: Updated defined variable names
-Enh: Initial infrastructure for installing content management integration modules
-Enh: Load base class for add-on module(s).
-Enh: Refactored file
-Enh: Parent class for all BPC modules. Handles activation, deactivation & init of actions unless overridden.
-Enh: Infrastructure to support standalone plugins/modules/add-ons for 3rd party content protection systems
-Enh: 3rd party modules in own namespace (E20R\BLUR_PROTECTED_CONTENT\MODULES)
-Enh: Update module infrastructure for 3rd party modules.
-Enh: Initial commit of Module base class
+Fix: Element placement in settings page header
+Fix: PHP warning about undefined variable
+Enh/Fix: Stop warnings about (expected) incomplete HTML when loading page
+Enh: Load styles for backend page
+Enh/Fix: Load dynamic version number & update support link text
+Enh: Add admin options banner image
+Enh: Use E20R styling on backend options page(s)
+Enh: Styling for backend options page - Initial commit
