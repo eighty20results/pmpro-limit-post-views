@@ -1,1 +1,1 @@
-Fix: Include banner image in kit
+Enh/Fix: Rename admin page & fix typo in plugin name
