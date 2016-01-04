@@ -1,11 +1,10 @@
 <?php
 /**
- * PMPro Limit Post Views settings page
+ * E20R Blur Protected Content settings page
  *
  * Displays settings page.
  *
- * @since 0.3.0
- * @package PMPro_Limit_Post_Views
+ * @since 0.1.0
  */
 
 // Check permissions first
