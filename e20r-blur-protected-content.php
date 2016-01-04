@@ -5,7 +5,7 @@ use E20R\BLUR_PROTECTED_CONTENT as BPPC;
 Plugin Name: Eighty/20 Results - Blur Protected Content
 Plugin URI: https://www.eighty20results.com/plugins/e20r-blur-protected-content/
 Description: Integrates with a content protection plugin to deliver a more SEO friendly way to protect the content.
-Version: 0.8.2
+Version: 0.8.3
 Author: Thomas Sjolshagen (Eighty/20 Results)
 Author URI: http://www.eighty20results.com/thomas-sjolshagen
 */
@@ -21,7 +21,7 @@ Author URI: http://www.eighty20results.com/thomas-sjolshagen
  */
 define(__NAMESPACE__ . '\NS', __NAMESPACE__ . '\\');
 
-define('E20R_BPC_VER', '0.8.2');
+define('E20R_BPC_VER', '0.8.3');
 define('E20R_BPC_PLUGIN_URL', plugins_url('', __FILE__));
 define('E20R_BPC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('E20R\BLUR_PROTECTED_CONTENT\NS\E20R_MAX_LOG_SIZE', 1024 * 2014 * 3); // In MB

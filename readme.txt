@@ -3,7 +3,7 @@ Contributors: eighty20results
 Tags: paid memberships pro, pmpro, dagbladet, post encryption, hide content, seo friendly
 Requires at least: 3.7
 Tested up to: 4.4
-Stable tag: 0.8.2
+Stable tag: 0.8.3
 
 Integrates with a Membership/Content protection plugin to hide the content they'd like to protect (encrypt & blur) with a pretty overlay & call to action
 
@@ -31,6 +31,9 @@ Please post it in the GitHub issue tracker here: https://github.com/eighty20resu
 Please visit our support site at http://www.eighty20results.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.8.3 =
+* Fix: Include banner image in kit
+
 = 0.8.2 =
 * Fix: Element placement in settings page header
 * Fix: PHP warning about undefined variable
