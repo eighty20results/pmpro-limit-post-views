@@ -12,8 +12,8 @@ $view = isset($_REQUEST['page'])? sanitize_text_field($_REQUEST['page']) : ""; ?
             <img src="<?php echo E20R_BPC_PLUGIN_URL; ?>/images/Eighty20Results-Logo-small.png" height="75" border="0" alt="Eighty/20Results by Wicked Strong Chick, LLC (c) - All Rights Reserved" />
         </a>
         <div class="e20rbpc-meta">
-            <span class="e20rbpc-grey">v<?php echo "0.8.1"; ?></span>
-            <a target="_blank" class="e20rbpc-tag-green" href="https://eighty20results.zendesk.com"><?php _e('Plugin Support', 'e20rbpc');?></a>
+            <span class="e20rbpc-grey">v<?php echo E20R_BPC_VER; ?></span>
+            <a target="_blank" class="e20rbpc-tag-green" href="https://eighty20results.zendesk.com"><?php _e('Click for Plugin Support', 'e20rbpc');?></a>
         </div>
         <br style="clear:both;" />
     </div>
