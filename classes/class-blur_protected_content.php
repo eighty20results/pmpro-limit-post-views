@@ -603,22 +603,30 @@ class blur_protected_content
                 E20R_BPC_VER,
                 true
             );
+        } else {
+            wp_enqueue_script(
+                'e20r-blur-protected-content',
+                E20R_BPC_PLUGIN_URL . '/js/e20r-blur-protected-content.js',
+                array('jquery', 'jquery-scrolltofixed'),
+                E20R_BPC_VER,
+                true
+            );
         }
 
-        if (file_exists(get_template_directory() . '/e20r-style/e20r-blur-protected-content.css')) {
+        if (file_exists(get_template_directory() . '/e20r-style/blur-protected-content.css')) {
             wp_enqueue_style(
                 'e20r-blur-protected-content-user',
-                get_template_directory_uri() . '/e20r-style/e20r-blur-protected-content.css',
+                get_template_directory_uri() . '/e20r-style/blur-protected-content.css',
                 array('e20r-blur-protected-content'),
                 E20R_BPC_VER
             );
         }
 
         //Allow loading of CSS from user's template directory
-        if (file_exists(get_stylesheet_directory() . '/e20r-style/e20r-blur-protected-content.css')) {
+        if (file_exists(get_stylesheet_directory() . '/e20r-style/blur-protected-content.css')) {
             wp_enqueue_style(
                 'e20r-blur-protected-content-user',
-                get_stylesheet_directory_uri() . '/e20r-style/e20r-blur-protected-content.css',
+                get_stylesheet_directory_uri() . '/e20r-style/blur-protected-content.css',
                 array('e20r-blur-protected-content'),
                 E20R_BPC_VER
             );
