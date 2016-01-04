@@ -3,7 +3,7 @@
 # Created by Eighty / 20 Results, owned by Wicked Strong Chicks, LLC.
 # Developer: Thomas Sjolshagen <thomas@eigthy20results.com>
 #
-include=(adminpages classes css includes js languages e20r-blur-pmpro-content.php readme.txt)
+include=(adminpages classes css includes js languages e20r-blur-protected-content.php readme.txt)
 exclude=(vendor *.yml *.phar composer.*)
 short_name="e20r-blur-protected-content"
 plugin_path="${short_name}"
@@ -45,7 +45,8 @@ done
 
 cd ${dst_path}/..
 zip -r ${kit_name}.zip ${plugin_path}
-scp ${kit_name}.zip siteground-e20r:./www/protected-content/e20r-blur-pmpro-content/
-scp ${metadata} siteground-e20r:./www/protected-content/e20r-blur-pmpro-content/
+ssh siteground-e20r "cd ./www/protected-content/ ; mkdir -p \"${shortname}\""
+scp ${kit_name}.zip siteground-e20r:./www/protected-content/e20r-blur-protected-content/
+scp ${metadata} siteground-e20r:./www/protected-content/e20r-blur-protected-content/
 ssh siteground-e20r "cd ./www/protected-content/ ; ln -sf \"${short_name}\"/\"${short_name}\"-\"${version}\".zip \"${short_name}\".zip"
 rm -rf ${dst_path}
