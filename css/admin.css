@@ -1,0 +1,38 @@
+.e20rbpc-admin {padding: 1em 0 70px 0;}
+.e20rbpc-banner {}
+.e20r_logo {
+    float: left;
+    margin: 0 1em 0 0;
+    width: auto;
+    height: 75px;
+}
+.e20rbpc-meta {
+    float: left;
+    margin: 26px 0 0 0;
+    font-size: 12px;
+}
+.e20rbpc-grey {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: bold;
+    position: relative;
+    padding: 2px 5px;
+    border: 1px solid #CCC;
+    background: whiteSmoke;
+    color: #288810;
+}
+.e20rbpc-meta
+.e20rbpc-tag-green {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: bold;
+    position: relative;
+    padding: 2px 5px;
+    border: 1px solid #288810;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    background: #288810;
+    color: #FFF;
+    text-decoration: none;
+}
