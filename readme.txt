@@ -11,7 +11,7 @@ Integrates with a Membership/Content protection plugin to hide the content they'
 
 Inspired by a few news outlet sites which adds an overlay for paywall protected content. Admin can configure settings for much of the content should be unencrypted/unblurred (# of paragraphs), and what content (page) should act as the Call-To-Action overlay. The CTA overlay should indicate what prospective members need to do in order to gain access (show the membership levels protecting this content, for instance).
 
-The CTA (list(s) membership levels that are currently protecting the underlying (encrypted) content. The randomizer uses a pseudo-random character generator, so it's not "straight forward" to identify the actual content even if the user is CSS savvy & can "unblur" the page in their browser's development console.
+The CTA can be any page you want it to be. The idea is to provide compelling (but short) copy to make your readers want to pay for the underlying (encrypted) content. The randomizer uses a pseudo-random character generator, so it's not "straight forward" to identify the actual content even if the user is CSS savvy & can "unblur" the page in their browser's development console.
 
 == Installation ==
 
