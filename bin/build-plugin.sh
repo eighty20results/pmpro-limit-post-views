@@ -5,6 +5,7 @@
 #
 include=(adminpages classes css images includes js languages e20r-blur-protected-content.php readme.txt)
 exclude=(vendor *.yml *.phar composer.*)
+build=(classes/plugin-updates/vendor/*.php)
 short_name="e20r-blur-protected-content"
 plugin_path="${short_name}"
 readme_path="../build_readmes/"
@@ -41,6 +42,11 @@ done
 
 for e in ${exclude[@]}; do
     find ${dst_path} -name ${e} -exec rm -rf {} \;
+done
+
+mkdir -p ${dst_path}/classes/plugin-updates/vendor/
+for b in ${build[@]}; do
+    cp ${src_path}${b} ${dst_path}/classes/plugin-updates/vendor/
 done
 
 cd ${dst_path}/..
