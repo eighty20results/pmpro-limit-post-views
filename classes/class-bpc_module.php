@@ -9,6 +9,7 @@
 namespace E20R\BLUR_PROTECTED_CONTENT\MODULES;
 
 use E20R\BLUR_PROTECTED_CONTENT AS BPC;
+use E20R\BLUR_PROTECTED_CONTENT\Tools as Debug;
 
 /**
  * Class BPC_Module
@@ -26,6 +27,7 @@ class BPC_Module
      */
     public function __construct()
     {
+
         self::$module = get_class(get_parent_class($this));
 
         if (isset(self::$_this)) {
@@ -36,11 +38,11 @@ class BPC_Module
                 )
             );
         }
-
-        e20rbpc_write_log("Base module class loading: " . $this->module);
+        Debug\DBG::set_plugin_name(self::$module);
+        Debug\DBG::log("Base module class loading: " . self::$module);
 
         self::$_this = $this;
-        $tmp = preg_split("/\//", $self::module);
+        $tmp = explode('\/', self::$module);
         $class_name = $tmp[(count($tmp)-1)];
 
         add_filter("get_bpc_" .$class_name . "_class_instance", array($this, 'get_instance'));
@@ -60,13 +62,13 @@ class BPC_Module
         check_admin_referer( "activate-plugin_{$plugin}" );
 
         self::$module = get_called_class();
-        e20rbpc_write_log("Running activate() for " . self::$module . " module class");
+        Debug\DBG::log("Running activate() for " . self::$module . " module class");
 
         $modules = get_option('e20rbpc_modules', array());
 
         if (!in_array(self::$module, $modules)) {
 
-            e20rbpc_write_log("Adding module");
+            Debug\DBG::log("Adding module");
             $reflector = new \ReflectionClass(self::$module);
             $file = $reflector->getFileName();
 
@@ -74,8 +76,8 @@ class BPC_Module
             update_option('e20rbpc_modules', $modules, true);
         }
 
-        e20rbpc_write_log("class::activate() - Content of module array: ");
-        e20rbpc_write_log($modules);
+        Debug\DBG::log("class::activate() - Content of module array: ");
+        Debug\DBG::log($modules);
     }
 
     /**
@@ -92,19 +94,19 @@ class BPC_Module
 
         self::$module = get_called_class();
 
-        e20rbpc_write_log("Running deactivate (via parent) for " . self::$module . " module class");
+        Debug\DBG::log("Running deactivate (via parent) for " . self::$module . " module class");
 
         $modules = get_option('e20rbpc_modules', array());
 
         if (in_array(self::$module, $modules)) {
 
-            e20rbpc_write_log("Removing module");
+            Debug\DBG::log("Removing module");
             unset($modules[self::$module]);
             update_option('e20rbpc_modules', $modules, true);
         }
 
-        e20rbpc_write_log("clas::deactivate() - Content of module array: ");
-        e20rbpc_write_log($modules);
+        Debug\DBG::log("clas::deactivate() - Content of module array: ");
+        Debug\DBG::log($modules);
 
     }
 
@@ -115,7 +117,7 @@ class BPC_Module
     public function init()
     {
 
-        e20rbpc_write_log("Running init() for base module class");
+        Debug\DBG::log("Running init() for base module class");
         add_action('e20rbpc_remove_excerpt_filters', array($this, "remove_" . $this->module . "_excerpt_filters"));
         add_action('e20rbpc_remove_content_filters', array($this, "remove_" . $this->module . "_content_filters"));
         add_action('e20rbpc_add_excerpt_filters', array($this, "add_" . $this->module . "_excerpt_filters"));
