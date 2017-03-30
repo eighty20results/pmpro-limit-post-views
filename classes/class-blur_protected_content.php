@@ -6,6 +6,7 @@
 namespace E20R\BLUR_PROTECTED_CONTENT;
 
 use E20R\BLUR_PROTECTED_CONTENT as BPC;
+use E20R\BLUR_PROTECTED_CONTENT\Tools as Debug;
 
 class blur_protected_content
 {
@@ -30,12 +31,15 @@ class blur_protected_content
 
         self::$_this = $this;
 
-        $this->load_modules();
+        Debug\DBG::set_plugin_name(__CLASS__);
+
+        Debug\DBG::log("Loading " . get_class(self::$_this) );
 
         // Don't print warnings about bad/incomplete HTML
         libxml_use_internal_errors(true);
 
         add_filter('get_e20rbpc_class_instance', array($this, 'get_instance'));
+        add_filter('plugins_loaded', array($this, 'load_modules'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin'));
         add_action('wp_loaded', array($this, 'init'));
@@ -52,22 +56,30 @@ class blur_protected_content
 
         foreach( $modules as $class => $path ) {
 
-            e20rbpc_write_log("Attempting to load: {$class} at: {$path}");
+            Debug\DBG::log("Attempting to load: {$class} from {$path}");
 
-            if (!empty($path) && !empty($class)) {
+            if (!empty($path) && !empty($class) && !class_exists($class)) {
 
                 $success = include_once $path;
 
-                if (!$success) {
+                Debug\DBG::log("include_once for path is: " . ( $success ? 'true' : 'false'));
 
-                    e20rbpc_write_log("Error: Unable to load {$class} from {$path}");
+                if (false === $success) {
+
+                    Debug\DBG::log("Error: Unable to load {$class} from {$path}");
                     continue;
                 }
 
-                $tmp = preg_split("/\//", $class);
+                $tmp = explode( '\\', $class);
+                Debug\DBG::log("Split array contains: " . print_r($tmp, true));
+
                 $class_name = $tmp[(count($tmp)-1)];
+                Debug\DBG::log("Class name is: {$class_name}");
 
                 $this->modules[] = apply_filters("get_{$class_name}_class_instance", null);
+            }
+            else {
+                Debug\DBG::log("Class is loaded: {$class}");
             }
         }
 
@@ -82,6 +94,10 @@ class blur_protected_content
      */
     public static function get_instance()
     {
+        if (null == self::$_this) {
+            self::$_this = new self;
+        }
+
         return self::$_this;
     }
 
@@ -177,8 +193,29 @@ class blur_protected_content
      */
     public function encode_excerpt($content)
     {
-        e20rbpc_write_log("Processing as an excerpt");
-        return $this->encode_content($content);
+        global $post;
+
+        if (in_the_loop())
+        {
+            Debug\DBG::log("We're on the dedicated blog page.");
+
+            if  (isset($post->post_excerpt) && strlen($post->post_excerpt) > 0)
+            {
+                Debug\DBG::log("Processing as an excerpt only");
+                return $post->post_excerpt;
+            }
+            else
+            {
+
+            }
+        }
+
+        // return $this->encode_content($content);
+
+        if ( empty($post->post_excerpt)) {
+            // TODO: Generate an excerpt, using the settings for the page.
+        }
+
     }
 
     /**
@@ -227,14 +264,14 @@ class blur_protected_content
 
             if (!empty($post->post_excerpt)) {
 
-                e20rbpc_write_log("Using the post excerpt for the visible content");
+                Debug\DBG::log("Using the post excerpt for the visible content");
                 $rt = explode(PHP_EOL, $post->post_excerpt);
             }
 
             $start = ($this->options['paragraphs']);
 
             // Process content that should remain visible.
-            for ($i = 0; $i < $this->options['paragraphs']; ++$i) {
+            for ($i = 0; $i < ($this->options['paragraphs'] -1 ); ++$i) {
 
                 if (0 != preg_match('/\[.*\]/', $rt[$i], $m)) {
 
@@ -247,14 +284,14 @@ class blur_protected_content
                 }
             }
 
-            e20rbpc_write_log("Requested {$this->options['paragraphs']} paragraphs w/standard content. Got: " . count($rt_to_add));
+            Debug\DBG::log("Requested {$this->options['paragraphs']} paragraphs w/standard content. Got: " . count($rt_to_add));
 
             //Make remaining content mostly unreadable.
             $regular_text = implode('</p>', $rt_to_add) . '</p>';
 
             $regular_text = $this->reapply_filters($regular_text);
 
-            e20rbpc_write_log("Making remaining content unreadable, starting at {$start}");
+            Debug\DBG::log("Making remaining content unreadable, starting at {$start}");
 
             $i = 0;
 
@@ -330,7 +367,7 @@ class blur_protected_content
     {
 
         if (empty($paragraph) || 0 != preg_match('/^\s+$/', $paragraph)) {
-            e20rbpc_write_log("Skipping line, it's empty");
+            Debug\DBG::log("Skipping line, it's empty");
             return $paragraph;
         }
 
@@ -454,7 +491,7 @@ class blur_protected_content
             $levels_page = $options['ctapage'];
         }
 
-        e20rbpc_write_log("CTA page ID: {$levels_page}");
+        Debug\DBG::log("CTA page ID: {$levels_page}");
         $lvlpage = get_post($levels_page);
 
         ob_start();
@@ -541,7 +578,7 @@ class blur_protected_content
      */
     public function enqueue_admin() {
 
-            e20rbpc_write_log("Loading styles for admin pages");
+            Debug\DBG::log("Loading styles for admin pages");
             wp_enqueue_style(
                 'e20r-bpc-admin',
                 E20R_BPC_PLUGIN_URL . '/css/admin.css',
@@ -578,7 +615,7 @@ class blur_protected_content
         if (false === WP_DEBUG &&
             file_exists(E20R_BPC_PLUGIN_DIR . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js')
         ) {
-            e20rbpc_write_log("Loading scrollToFixed jQuery plugin for production");
+            Debug\DBG::log("Loading scrollToFixed jQuery plugin for production");
             wp_enqueue_script(
                 'jquery-scrolltofixed',
                 E20R_BPC_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed-min.js',
@@ -590,7 +627,7 @@ class blur_protected_content
         } else if (true === WP_DEBUG &&
             file_exists(E20R_BPC_PLUGIN_DIR . '/js/lib/scrollToFixed/jquery-scrolltofixed.js')
         ) {
-            e20rbpc_write_log("Loading scrollToFixed jQuery plugin for test/debug");
+            Debug\DBG::log("Loading scrollToFixed jQuery plugin for test/debug");
             wp_enqueue_script(
                 'jquery-scrolltofixed',
                 E20R_BPC_PLUGIN_URL . '/js/lib/scrollToFixed/jquery-scrolltofixed.js',
@@ -604,7 +641,7 @@ class blur_protected_content
         if (false === WP_DEBUG &&
             file_exists(E20R_BPC_PLUGIN_DIR . '/js/e20r-blur-protected-content.min.js')
         ) {
-            e20rbpc_write_log("Loading Blur PMPro Content Javascript for production");
+            Debug\DBG::log("Loading Blur PMPro Content Javascript for production");
             wp_enqueue_script(
                 'e20r-blur-protected-content',
                 E20R_BPC_PLUGIN_URL . '/js/e20r-blur-protected-content.min.js',
@@ -615,7 +652,7 @@ class blur_protected_content
         } else if (true === WP_DEBUG &&
             file_exists(E20R_BPC_PLUGIN_DIR . '/js/e20r-blur-protected-content.js')
         ) {
-            e20rbpc_write_log("Loading Blur PMPro Content Javascript for test/debug");
+            Debug\DBG::log("Loading Blur PMPro Content Javascript for test/debug");
             wp_enqueue_script(
                 'e20r-blur-protected-content',
                 E20R_BPC_PLUGIN_URL . '/js/e20r-blur-protected-content.js',
@@ -701,7 +738,7 @@ class blur_protected_content
             $post_id = $post->ID;
         }
 
-        e20rbpc_write_log("Checking whether {$post_id} is protected by PMPro");
+        Debug\DBG::log("Checking whether {$post_id} is protected by PMPro");
         $level_info = \pmpro_has_membership_access($post_id, $current_user->ID, true);
 
         return isset($level_info[1]);
